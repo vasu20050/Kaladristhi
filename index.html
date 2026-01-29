@@ -295,8 +295,8 @@
                         <p id="ai-feedback" class="text-xs text-center italic text-gray-300">"Initialize camera..."</p>
                     </div>
                 </div>
-               <!-- LEFT SIDE TUTORIAL VIDEO -->
-<div id="practice-tutorial-video" class="absolute top-20 left-8 w-72 h-40 bg-black rounded-xl overflow-hidden shadow-2xl z-30">
+              <!-- LEFT SIDE TUTORIAL VIDEO -->
+<div id="practice-tutorial-video" class="absolute top-20 left-8 w-72 h-40 bg-black rounded-xl overflow-hidden shadow-2xl z-30 cursor-move">
     <iframe src="https://www.youtube.com/embed/Hdai7FJrQ5Q?autoplay=1&mute=1"
             class="w-full h-full object-cover"
             title="Tutorial Video"
@@ -305,6 +305,41 @@
             allowfullscreen>
     </iframe>
 </div>
+
+<script>
+    // Make the tutorial video draggable
+    const videoBox = document.getElementById('practice-tutorial-video');
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    videoBox.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - videoBox.offsetLeft;
+        offsetY = e.clientY - videoBox.offsetTop;
+        videoBox.style.transition = 'none'; // Disable transition while dragging
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        let x = e.clientX - offsetX;
+        let y = e.clientY - offsetY;
+
+        // Optional: keep it inside the window
+        x = Math.max(0, Math.min(window.innerWidth - videoBox.offsetWidth, x));
+        y = Math.max(0, Math.min(window.innerHeight - videoBox.offsetHeight, y));
+
+        videoBox.style.left = x + 'px';
+        videoBox.style.top = y + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            videoBox.style.transition = ''; // Restore transition if needed
+        }
+    });
+</script>
+
 
 
 
