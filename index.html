@@ -16,7 +16,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- MediaPipe Holistic Libraries (Full Body + Face Mesh + Segmentation) -->
+    <!-- MediaPipe Holistic Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
@@ -62,7 +62,6 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
         }
 
-        /* Typography Utilities */
         .text-gold-gradient {
             background: linear-gradient(to bottom right, #fceeb5, #eebc51, #b88a2d);
             -webkit-background-clip: text;
@@ -71,7 +70,6 @@
             text-shadow: 0 2px 10px rgba(238, 188, 81, 0.2);
         }
 
-        /* View Management */
         .view-section {
             display: none;
             min-height: 100vh;
@@ -84,12 +82,8 @@
             flex-direction: column;
         }
 
-        /* Video Mirroring Class */
-        .mirror-mode {
-            transform: scaleX(-1);
-        }
+        .mirror-mode { transform: scaleX(-1); }
 
-        /* Animations */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -129,12 +123,10 @@
     <!-- VIEW 1: LANDING -->
     <!-- ============================================== -->
     <div id="view-landing" class="view-section active items-center justify-center">
-        <!-- Background -->
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1543165365-072114002636?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover opacity-40" alt="Classical Dance Mood">
             <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-dark)] via-transparent to-black opacity-90"></div>
         </div>
-
         <div class="relative z-10 text-center p-8 animate-fade-up">
             <div class="mb-6 flex justify-center">
                 <div class="w-20 h-20 border border-[var(--color-primary)] rounded-full flex items-center justify-center">
@@ -156,7 +148,6 @@
             <img src="https://images.unsplash.com/photo-1518131393663-39c2f6d62325?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover opacity-30" alt="Dancer Silhouette">
             <div class="absolute inset-0 bg-[var(--color-bg-dark)]/80"></div>
         </div>
-
         <div class="relative z-10 max-w-2xl animate-fade-up">
             <h2 class="text-5xl md:text-7xl font-display text-white mb-8 leading-tight">
                 Step into the <br>
@@ -184,11 +175,8 @@
             </div>
             <div class="text-sm uppercase tracking-widest text-[var(--color-text-muted)] hidden md:block">Select Form</div>
         </header>
-
         <main class="relative z-10 pt-32 pb-12 px-8 md:px-12 w-full max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="dance-grid">
-                <!-- JS Injects Cards -->
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="dance-grid"></div>
         </main>
     </div>
 
@@ -206,23 +194,19 @@
                 <h1 id="dashboard-title" class="text-5xl md:text-6xl font-display text-[var(--color-primary)]">Title</h1>
             </div>
         </div>
-
         <main class="px-8 md:px-12 py-8 max-w-5xl mx-auto w-full">
             <div class="flex items-center justify-between mb-8">
                 <h3 class="text-2xl font-display text-white">Curriculum</h3>
-                <div class="text-sm text-[var(--color-text-muted)]">Beginner • 5 Lectures</div>
+                <div class="text-sm text-[var(--color-text-muted)]">Beginner • 4 Lectures</div>
             </div>
-            <div class="space-y-4" id="lecture-list">
-                <!-- JS Injects List -->
-            </div>
+            <div class="space-y-4" id="lecture-list"></div>
         </main>
     </div>
 
     <!-- ============================================== -->
-    <!-- VIEW 5: LECTURE / PRACTICE (ADVANCED AI) -->
+    <!-- VIEW 5: LECTURE / PRACTICE / RESULTS -->
     <!-- ============================================== -->
     <div id="view-lecture" class="view-section bg-black">
-        <!-- Header -->
         <header id="lecture-header" class="fixed top-0 left-0 w-full z-50 px-6 py-4 flex items-center justify-between bg-gradient-to-b from-black/90 to-transparent pointer-events-none">
             <div class="pointer-events-auto flex items-center gap-4">
                 <button onclick="router.navigate('dashboard')" class="p-2 rounded-full glass-card hover:bg-white/10 transition">
@@ -233,6 +217,7 @@
             <div class="pointer-events-auto flex gap-2 glass-card p-1 rounded-full">
                 <button onclick="app.switchTab('tutorial')" id="tab-tutorial" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition bg-[var(--color-primary)] text-black">Learn</button>
                 <button onclick="app.switchTab('practice')" id="tab-practice" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition text-gray-400 hover:text-white">Practice</button>
+                <button onclick="app.switchTab('results')" id="tab-results" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition text-gray-400 hover:text-white">Results</button>
             </div>
         </header>
 
@@ -241,7 +226,6 @@
             <!-- TUTORIAL TAB -->
             <div id="content-tutorial" class="tab-content w-full h-full p-4 md:p-8 flex flex-col md:flex-row gap-6 animate-fade-up max-w-7xl mx-auto">
                 <div class="flex-grow bg-zinc-900 rounded-2xl overflow-hidden relative group border border-white/10 shadow-2xl">
-                    <!-- Embedded YouTube Video -->
                     <iframe class="w-full h-full object-cover" 
                             src="https://www.youtube.com/embed/SgiLOz3bFf4?si=6s8V2l1S3f0wY3k8" 
                             title="Bharatanatyam Basic Steps" 
@@ -254,131 +238,174 @@
                 <div class="w-full md:w-80 flex-shrink-0 glass-card p-6 rounded-2xl h-fit">
                     <h4 class="text-[var(--color-primary)] font-bold uppercase text-xs tracking-widest mb-4">Guru's Notes</h4>
                     <ul class="space-y-4 text-sm text-gray-400">
-                        <li class="flex gap-3">
-                            <i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i>
-                            Keep your back strictly straight.
-                        </li>
-                        <li class="flex gap-3">
-                            <i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i>
-                            Bend knees outward in Aramandi.
-                        </li>
+                        <li class="flex gap-3"><i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i> Keep back straight.</li>
+                        <li class="flex gap-3"><i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i> Bend knees outward.</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- PRACTICE TAB (AI) -->
+            <!-- PRACTICE TAB -->
             <div id="content-practice" class="tab-content hidden w-full h-full relative bg-black">
-                <!-- Video Layers (Hidden opacity, not display:none for access) -->
-                <video id="webcam" class="absolute inset-0 w-full h-full object-cover mirror-mode opacity-0" autoplay muted playsinline></video>
-                <img id="static-image-source" class="absolute inset-0 w-full h-full object-contain opacity-0 hidden">
-                <canvas id="output_canvas" class="absolute inset-0 w-full h-full object-cover mirror-mode"></canvas>
+                <video id="webcam" class="absolute inset-0 w-full h-full object-contain mirror-mode" autoplay muted playsinline></video>
+                <img id="static-image-source" class="absolute inset-0 w-full h-full object-contain hidden">
+                <canvas id="output_canvas" class="absolute inset-0 w-full h-full object-contain mirror-mode"></canvas>
                 
                 <!-- RIGHT SIDE: AI Panel (Fixed) -->
                 <div id="ai-panel" class="absolute top-20 right-8 w-72 glass-card p-5 rounded-xl z-20 transform translate-x-[150%] transition-transform duration-500">
                     <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
                         <span class="text-[var(--color-primary)] font-display text-lg">Holistic Analysis</span>
-                        <span class="flex h-3 w-3 relative">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] uppercase text-gray-400">Status:</span>
+                            <div id="status-indicator" class="w-2 h-2 rounded-full bg-gray-500"></div>
+                        </div>
                     </div>
                     
-                    <!-- Metric: Face Mesh -->
                     <div class="mb-4">
                         <div class="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>Expression (Abhinaya)</span>
+                            <span>Expression</span>
                             <span id="val-expression" class="text-white">Neutral</span>
                         </div>
                         <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
                             <div id="bar-expression" class="h-full bg-purple-500 w-0 transition-all duration-300"></div>
                         </div>
                     </div>
-
-                    <!-- Metric: Posture -->
+                    
                     <div class="mb-4">
                         <div class="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>Posture (Angashuddhi)</span>
+                            <span>Posture</span>
                             <span id="val-posture">0%</span>
                         </div>
                         <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
                             <div id="bar-posture" class="h-full bg-green-500 w-0 transition-all duration-300"></div>
                         </div>
                     </div>
-
+                    
                     <div class="p-3 bg-white/5 rounded border border-white/5">
                         <p id="ai-feedback" class="text-xs text-center italic text-gray-300">"Initialize camera..."</p>
                     </div>
                 </div>
 
-                <!-- BOTTOM RIGHT: Record Button -->
+                <!-- CONTROLS: Bottom Right Stack -->
                 <div id="cam-controls" class="absolute bottom-10 right-10 flex flex-col items-center gap-4 z-50 opacity-0 transition pointer-events-none">
+                     <!-- Landmark Toggle Button -->
+                     <button id="btn-toggle-landmarks" onclick="app.toggleLandmarks()" class="pointer-events-auto p-3 rounded-full bg-gray-800/80 hover:bg-gray-700 text-white mb-2 transition backdrop-blur-sm border border-white/20 shadow-lg" title="Show/Hide Landmarks">
+                        <i data-lucide="eye" class="w-6 h-6"></i>
+                     </button>
+
+                     <!-- Record Button -->
                      <button id="btn-record" onclick="app.toggleRecording()" class="pointer-events-auto w-16 h-16 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center shadow-lg shadow-black/50 transition transform hover:scale-110 border-4 border-white/20">
                          <div class="w-6 h-6 bg-white rounded-sm"></div>
                     </button>
                     <span class="text-xs text-white uppercase tracking-widest font-bold drop-shadow-md">Record</span>
                 </div>
 
-                <!-- Placeholder & Inputs -->
                 <div id="camera-placeholder" class="absolute inset-0 flex items-center justify-center bg-black/90 z-30">
                     <div class="text-center p-6">
                         <div class="w-20 h-20 bg-[var(--color-primary)]/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
                             <i data-lucide="camera" class="w-8 h-8 text-[var(--color-primary)]"></i>
                         </div>
                         <h3 class="text-2xl font-display text-white mb-2">Sanctum of Practice</h3>
-                        <p class="text-gray-400 mb-6 max-w-sm mx-auto">AI will track your face expressions, hands, and full body pose.</p>
-                        
+                        <p class="text-gray-400 mb-6 max-w-sm mx-auto">AI will track your pose. Blue lines indicate correct alignment, Red lines indicate errors.</p>
                         <div class="flex flex-col md:flex-row gap-4 justify-center">
                             <button onclick="app.startCamera()" class="px-8 py-3 bg-[var(--color-primary)] text-black font-bold rounded-full hover:scale-105 transition shadow-[0_0_20px_rgba(238,188,81,0.3)]">
                                 Start Live Camera
                             </button>
-                            
-                            <!-- Image Upload Button -->
                             <label class="px-8 py-3 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition cursor-pointer flex items-center gap-2">
-                                <i data-lucide="upload" class="w-4 h-4"></i>
-                                Upload Image
+                                <i data-lucide="upload" class="w-4 h-4"></i> Upload Image
                                 <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="app.handleImageUpload(event)">
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <!-- Loading Overlay -->
-                <div id="ai-loading" class="absolute inset-0 bg-black/90 z-40 hidden flex-col items-center justify-center">
+                <div id="ai-loading" class="absolute inset-0 bg-black/50 z-40 hidden flex-col items-center justify-center pointer-events-none">
                     <div class="loader-ring"></div>
-                    <p class="mt-4 text-[var(--color-primary)] uppercase tracking-widest text-xs">Initializing Neural Models...</p>
+                    <p class="mt-4 text-[var(--color-primary)] uppercase tracking-widest text-xs font-bold drop-shadow-md">Initializing AI...</p>
+                </div>
+            </div>
+
+            <!-- RESULTS TAB -->
+            <div id="content-results" class="tab-content hidden w-full h-full p-4 md:p-12 max-w-7xl mx-auto overflow-y-auto">
+                <div class="flex items-end justify-between mb-8 border-b border-white/10 pb-4">
+                    <div>
+                        <h2 class="text-4xl font-display text-white">Performance Report</h2>
+                        <p class="text-[var(--color-text-muted)] text-sm mt-2">Verified by Kaladrishti AI API</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold text-[var(--color-primary)]" id="total-score-display">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500">Total Sessions</div>
+                    </div>
+                </div>
+
+                <div id="results-list" class="grid gap-4">
+                    <!-- Results injected here -->
+                    <div class="text-center py-12 text-gray-500 italic">No recordings found. Complete a practice session to see results.</div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Processing Modal -->
+    <div id="processing-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center hidden">
+        <div class="text-center">
+            <div class="loader-ring mb-6 mx-auto"></div>
+            <h3 class="text-2xl font-display text-white mb-2">Analyzing Performance</h3>
+            <p class="text-gray-400 text-sm">Submitting data to API for verification...</p>
+        </div>
     </div>
 
     <!-- ============================================== -->
     <!-- JAVASCRIPT LOGIC -->
     <!-- ============================================== -->
     <script>
-        // --- MONGODB SIMULATION SERVICE ---
+        // --- API INTEGRATION CLASS ---
+        class KaladrishtiAPI {
+            constructor(baseUrl) {
+                this.baseUrl = baseUrl || 'https://api.kaladrishti.com/v1'; // Placeholder
+            }
+
+            // Simulates sending video/pose data to backend
+            async sendAnalysisData(sessionData) {
+                console.log("Sending data to API:", sessionData);
+                
+                // MOCK API DELAY & RESPONSE
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        // Mocking logic: Score calculated locally but verified by "server"
+                        const isVerified = sessionData.score > 70;
+                        resolve({
+                            status: 200,
+                            data: {
+                                verified: isVerified,
+                                serverMessage: isVerified ? "Excellent alignment verified." : "Improvement needed in posture.",
+                                correctionPoints: ["Spine straightness", "Elbow height"]
+                            }
+                        });
+                    }, 2000);
+                });
+            }
+        }
+        const api = new KaladrishtiAPI();
+
+        // --- DATABASE SERVICE ---
         class MongoService {
             constructor(collectionName) {
                 this.collection = collectionName;
                 this.storageKey = `mongodb_${collectionName}`;
             }
-            async find(query = {}) {
-                const data = JSON.parse(localStorage.getItem(this.storageKey)) || [];
-                return data; 
-            }
-            async insertOne(document) {
+            async find() { return JSON.parse(localStorage.getItem(this.storageKey)) || []; }
+            async insertOne(doc) {
                 const data = await this.find();
-                const newDoc = { ...document, _id: Date.now().toString() }; 
+                const newDoc = { ...doc, _id: Date.now().toString(), timestamp: new Date() };
                 data.unshift(newDoc);
                 localStorage.setItem(this.storageKey, JSON.stringify(data));
-                return { acknowledged: true, insertedId: newDoc._id };
+                return newDoc;
             }
         }
         const practiceSessionsDB = new MongoService('sessions');
 
-        // --- DATA ---
-        // Using authentic images for each dance form
         const DANCES = [
-            { id: 'bharatanatyam', name: 'Bharatanatyam', img: 'https://images.unsplash.com/photo-1627807205244-8d48a3136279?auto=format&fit=crop&q=80&w=600', origin: 'Tamil Nadu' },
+            { id: 'bharatanatyam', name: 'Bharatanatyam', img: 'https://images.unsplash.com/photo-1544256272-690c50f8373b?auto=format&fit=crop&q=80&w=600', origin: 'Tamil Nadu' },
             { id: 'kathak', name: 'Kathak', img: 'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&q=80&w=600', origin: 'North India' },
             { id: 'odissi', name: 'Odissi', img: 'https://images.unsplash.com/photo-1637508920953-2775797f26f2?auto=format&fit=crop&q=80&w=600', origin: 'Odisha' },
             { id: 'kuchipudi', name: 'Kuchipudi', img: 'https://images.unsplash.com/photo-1650346896264-50e502844837?auto=format&fit=crop&q=80&w=600', origin: 'Andhra Pradesh' },
@@ -389,10 +416,10 @@
         ];
 
         const LECTURES = [
-            { id: 1, title: 'Pranam (Salutation)', duration: '8 min', desc: 'The invocation of Mother Earth.' },
-            { id: 2, title: 'Aramandi (Stance)', duration: '15 min', desc: 'The fundamental half-seated posture.' },
-            { id: 3, title: 'Nritta Hastas', duration: '20 min', desc: 'Hand gestures for pure dance.' },
-            { id: 4, title: 'Abhinaya (Expression)', duration: '25 min', desc: 'Navarasa - The nine emotions.' },
+            { id: 1, title: 'Pranam (Salutation)', duration: '8 min', desc: 'Invocation of Mother Earth.' },
+            { id: 2, title: 'Aramandi (Stance)', duration: '15 min', desc: 'Half-seated posture basics.' },
+            { id: 3, title: 'Nritta Hastas', duration: '20 min', desc: 'Pure dance hand gestures.' },
+            { id: 4, title: 'Abhinaya (Expression)', duration: '25 min', desc: 'The nine emotions.' },
         ];
 
         const state = {
@@ -402,53 +429,50 @@
             recording: false,
             holistic: null,
             camera: null,
-            mode: 'camera', // 'camera' or 'image'
-            history: []
+            mode: 'camera',
+            history: [],
+            currentScore: 0,
+            loopId: null,
+            showLandmarks: true
         };
 
-        // --- ROUTER ---
         const router = {
             navigate: (viewId) => {
                 document.querySelectorAll('.view-section').forEach(el => {
                     el.classList.remove('active');
                     if(el.classList.contains('animate-fade-up')) {
                         el.classList.remove('animate-fade-up');
-                        void el.offsetWidth; // Trigger reflow
+                        void el.offsetWidth;
                         el.classList.add('animate-fade-up');
                     }
                 });
-                
                 document.getElementById(`view-${viewId}`).classList.add('active');
                 state.view = viewId;
-
                 if(viewId !== 'lecture') app.stopCamera();
+                if(viewId === 'dashboard') {
+                    // Reset tab when entering new dashboard
+                    app.switchTab('tutorial'); 
+                }
                 window.scrollTo(0,0);
             }
         };
 
-        // --- APP LOGIC ---
         const app = {
             init: async () => {
                 lucide.createIcons();
                 app.renderDances();
                 state.history = await practiceSessionsDB.find();
-
                 setTimeout(() => {
-                    const landing = document.getElementById('view-landing');
-                    landing.style.opacity = '0';
-                    landing.style.transition = 'opacity 1s';
-                    setTimeout(() => {
-                        landing.style.display = 'none';
-                        router.navigate('entry');
-                    }, 1000);
+                    document.getElementById('view-landing').style.display = 'none';
+                    router.navigate('entry');
                 }, 3000);
             },
 
             renderDances: () => {
                 const grid = document.getElementById('dance-grid');
                 grid.innerHTML = DANCES.map(d => `
-                    <div onclick="app.selectDance('${d.id}')" class="group relative h-80 rounded-sm overflow-hidden cursor-pointer shadow-2xl border border-white/5 hover:border-[var(--color-primary)] transition-all">
-                        <img src="${d.img}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" alt="${d.name}">
+                    <div onclick="app.selectDance('${d.id}')" class="group relative h-52 rounded-sm overflow-hidden cursor-pointer shadow-2xl border border-white/5 hover:border-[var(--color-primary)] transition-all">
+                        <img src="${d.img}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" alt="${d.name}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518131393663-39c2f6d62325?q=80&w=600'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90"></div>
                         <div class="absolute bottom-0 left-0 p-6">
                             <p class="text-[var(--color-primary)] text-xs font-bold uppercase tracking-widest mb-1">${d.origin}</p>
@@ -462,7 +486,6 @@
                 state.dance = DANCES.find(d => d.id === id);
                 document.getElementById('dashboard-title').innerText = state.dance.name;
                 document.getElementById('dashboard-hero-img').src = state.dance.img;
-
                 document.getElementById('lecture-list').innerHTML = LECTURES.map((l, i) => `
                     <div onclick="app.selectLecture(${l.id})" class="glass-card p-6 rounded-sm flex items-center gap-6 cursor-pointer hover:bg-white/5 transition group border-l-4 border-transparent hover:border-l-[var(--color-primary)]">
                         <div class="text-4xl font-display text-gray-600 group-hover:text-[var(--color-primary)] transition">0${i+1}</div>
@@ -473,15 +496,12 @@
                         <div class="px-3 py-1 border border-gray-700 rounded text-xs text-gray-400">${l.duration}</div>
                     </div>
                 `).join('');
-                
                 router.navigate('dashboard');
             },
 
             selectLecture: (id) => {
                 state.lecture = LECTURES.find(l => l.id === id);
                 document.getElementById('lecture-nav-title').innerText = state.lecture.title;
-                // document.getElementById('vid-title').innerText = state.lecture.title; // Removed as iframe doesn't use it
-                // document.getElementById('vid-desc').innerText = state.lecture.desc;
                 app.switchTab('tutorial');
                 router.navigate('lecture');
             },
@@ -490,32 +510,45 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`content-${tab}`).classList.remove('hidden');
                 
-                const btnT = document.getElementById('tab-tutorial');
-                const btnP = document.getElementById('tab-practice');
+                ['tutorial', 'practice', 'results'].forEach(t => {
+                    const btn = document.getElementById(`tab-${t}`);
+                    if(t === tab) {
+                        btn.classList.add('bg-[var(--color-primary)]', 'text-black');
+                        btn.classList.remove('text-gray-400');
+                    } else {
+                        btn.classList.remove('bg-[var(--color-primary)]', 'text-black');
+                        btn.classList.add('text-gray-400');
+                    }
+                });
 
-                if(tab === 'practice') {
-                    btnP.classList.add('bg-[var(--color-primary)]', 'text-black');
-                    btnP.classList.remove('text-gray-400');
-                    btnT.classList.remove('bg-[var(--color-primary)]', 'text-black');
-                    btnT.classList.add('text-gray-400');
-                } else {
-                    btnT.classList.add('bg-[var(--color-primary)]', 'text-black');
-                    btnT.classList.remove('text-gray-400');
-                    btnP.classList.remove('bg-[var(--color-primary)]', 'text-black');
-                    btnP.classList.add('text-gray-400');
-                    app.stopCamera();
-                }
+                if(tab === 'practice') { /* Camera handled by button */ } 
+                else { app.stopCamera(); }
+                
+                if(tab === 'results') app.renderResults();
             },
 
-            // --- ADVANCED AI LOGIC ---
-            
+            toggleLandmarks: () => {
+                state.showLandmarks = !state.showLandmarks;
+                const btn = document.getElementById('btn-toggle-landmarks');
+                if(state.showLandmarks) {
+                    btn.classList.remove('bg-red-500/80');
+                    btn.classList.add('bg-gray-800/80');
+                    btn.innerHTML = `<i data-lucide="eye" class="w-6 h-6"></i>`;
+                } else {
+                    btn.classList.remove('bg-gray-800/80');
+                    btn.classList.add('bg-red-500/80');
+                    btn.innerHTML = `<i data-lucide="eye-off" class="w-6 h-6"></i>`;
+                }
+                lucide.createIcons();
+            },
+
             initHolistic: () => {
                 const holistic = new Holistic({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`});
                 holistic.setOptions({
                     modelComplexity: 1,
                     smoothLandmarks: true,
-                    enableSegmentation: false, // Changed to false to remove blur as requested
-                    smoothSegmentation: true,
+                    enableSegmentation: false, 
+                    smoothSegmentation: false,
                     refineFaceLandmarks: true,
                     minDetectionConfidence: 0.5,
                     minTrackingConfidence: 0.5
@@ -526,122 +559,115 @@
 
             startCamera: async () => {
                 state.mode = 'camera';
-                document.getElementById('camera-placeholder').style.display = 'none';
-                document.getElementById('ai-loading').style.display = 'flex';
-                
                 const video = document.getElementById('webcam');
-                
-                state.holistic = app.initHolistic();
+                const placeholder = document.getElementById('camera-placeholder');
+                const loader = document.getElementById('ai-loading');
+
+                placeholder.style.display = 'none';
+                loader.style.display = 'flex';
                 
                 try {
-                    const camera = new Camera(video, {
-                        onFrame: async () => { 
-                            if(state.mode === 'camera') await state.holistic.send({image: video}); 
-                        },
-                        // Adjusted resolution for better compatibility & performance (1280x720)
-                        width: 1280, 
-                        height: 720
+                    // INSTANT START: Get stream and play immediately
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { width: 1280, height: 720, facingMode: "user" } 
                     });
-                    state.camera = camera;
-                    await camera.start();
+                    video.srcObject = stream;
+                    await video.play();
                     
-                    video.play();
+                    // START AI IN BACKGROUND
+                    if(!state.holistic) state.holistic = app.initHolistic();
+                    
+                    // Custom loop for control
+                    const sendFrame = async () => {
+                        if(state.mode === 'camera' && !video.paused && !video.ended) {
+                            await state.holistic.send({image: video});
+                            state.loopId = requestAnimationFrame(sendFrame);
+                        }
+                    };
+                    sendFrame();
+
                 } catch (e) {
-                    alert("Camera access failed. Please use 'Upload Image' instead.");
-                    document.getElementById('ai-loading').style.display = 'none';
-                    document.getElementById('camera-placeholder').style.display = 'flex';
+                    console.error(e);
+                    alert("Camera start failed. Please check permissions.");
+                    loader.style.display = 'none';
+                    placeholder.style.display = 'flex';
                 }
             },
 
             handleImageUpload: (event) => {
                 const file = event.target.files[0];
                 if (!file) return;
-
-                // Stop live camera to free resources
-                if (state.camera) {
-                    state.camera.stop();
-                    const video = document.getElementById('webcam');
-                    if (video.srcObject) {
-                         video.srcObject.getTracks().forEach(t => t.stop());
-                         video.srcObject = null;
-                    }
-                }
-
                 state.mode = 'image';
+                if (state.loopId) cancelAnimationFrame(state.loopId);
                 const imgElement = document.getElementById('static-image-source');
-                const url = URL.createObjectURL(file);
-                
+                imgElement.src = URL.createObjectURL(file);
                 document.getElementById('camera-placeholder').style.display = 'none';
                 document.getElementById('ai-loading').style.display = 'flex';
-
                 imgElement.onload = async () => {
                     if(!state.holistic) state.holistic = app.initHolistic();
-                    
-                    // Process single frame
                     await state.holistic.send({image: imgElement});
                     document.getElementById('ai-loading').style.display = 'none';
-                    
-                    // Reveal UI
                     document.getElementById('ai-panel').classList.remove('translate-x-[150%]');
                 };
-                
-                imgElement.src = url;
                 imgElement.classList.remove('hidden');
-                
-                // Allow re-uploading same file
-                event.target.value = '';
             },
 
             onResults: (results) => {
                 document.getElementById('ai-loading').style.display = 'none';
                 const canvas = document.getElementById('output_canvas');
                 const ctx = canvas.getContext('2d');
-                
-                // Determine Source size
                 canvas.width = results.image.width;
                 canvas.height = results.image.height;
-                
-                // Manage Mirroring
-                if (state.mode === 'image') {
-                    canvas.classList.remove('mirror-mode');
-                } else {
-                    canvas.classList.add('mirror-mode');
-                }
+                state.mode === 'image' ? canvas.classList.remove('mirror-mode') : canvas.classList.add('mirror-mode');
                 
                 ctx.save();
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if(state.mode === 'image') ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
                 
-                // --- DRAW IMAGE (No Blur) ---
-                ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+                const analysis = app.analyzePosture(results.poseLandmarks); 
+                const feedbackColor = analysis > 75 ? '#00eaff' : '#ff3333'; 
+                
+                // CONDITIONAL DRAWING BASED ON TOGGLE
+                if (state.showLandmarks) {
+                    // 1. Pose: Body
+                    drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {color: feedbackColor, lineWidth: 3});
+                    drawLandmarks(ctx, results.poseLandmarks, {color: '#eebc51', lineWidth: 1, radius: 3, fillColor: feedbackColor});
 
-                // --- DRAW OVERLAYS ---
-                ctx.globalCompositeOperation = 'source-over';
-                
-                drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {color: 'rgba(238, 188, 81, 0.5)', lineWidth: 3});
-                drawLandmarks(ctx, results.poseLandmarks, {color: '#9e1b32', lineWidth: 1, radius: 4});
-                
-                drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {color: 'rgba(255, 255, 255, 0.3)', lineWidth: 2});
-                drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {color: 'rgba(255, 255, 255, 0.3)', lineWidth: 2});
+                    // 2. Hands
+                    drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
+                    drawLandmarks(ctx, results.leftHandLandmarks, {color: '#eebc51', lineWidth: 1, radius: 2});
+                    drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
+                    drawLandmarks(ctx, results.rightHandLandmarks, {color: '#eebc51', lineWidth: 1, radius: 2});
 
-                drawConnectors(ctx, results.faceLandmarks, FACEMESH_TESSELATION, {color: 'rgba(255, 255, 255, 0.05)', lineWidth: 0.5});
+                    // 3. Face: Only KEY Features (No full mesh)
+                    if (results.faceLandmarks) {
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_FACE_OVAL, {color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1});
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LEFT_EYE, {color: '#eebc51', lineWidth: 1});
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_RIGHT_EYE, {color: '#eebc51', lineWidth: 1});
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LIPS, {color: '#ff3333', lineWidth: 1});
+                    }
+                }
                 
                 ctx.restore();
 
-                // Analysis UI
                 app.analyzeExpression(results.faceLandmarks);
-                app.analyzePosture(results.poseLandmarks);
                 
-                const panel = document.getElementById('ai-panel');
-                const controls = document.getElementById('cam-controls');
-                panel.classList.remove('translate-x-[150%]');
-                controls.style.opacity = '1';
-                controls.style.pointerEvents = 'auto';
+                const statusInd = document.getElementById('status-indicator');
+                if (analysis > 75) statusInd.classList.replace('bg-red-500', 'bg-green-500') || statusInd.classList.add('bg-green-500');
+                else statusInd.classList.replace('bg-green-500', 'bg-red-500') || statusInd.classList.add('bg-red-500');
+
+                document.getElementById('ai-panel').classList.remove('translate-x-[150%]');
+                document.getElementById('cam-controls').style.opacity = '1';
+                document.getElementById('cam-controls').style.pointerEvents = 'auto';
             },
 
             stopCamera: () => {
-                if(state.camera) state.camera.stop();
-                if(state.holistic) state.holistic.close();
-                state.holistic = null;
+                if(state.loopId) cancelAnimationFrame(state.loopId);
+                const video = document.getElementById('webcam');
+                if (video.srcObject) {
+                    video.srcObject.getTracks().forEach(t => t.stop());
+                    video.srcObject = null;
+                }
                 
                 document.getElementById('camera-placeholder').style.display = 'flex';
                 document.getElementById('ai-panel').classList.add('translate-x-[150%]');
@@ -655,38 +681,76 @@
 
             analyzeExpression: (landmarks) => {
                 if(!landmarks) return;
-                const upperLip = landmarks[13];
-                const lowerLip = landmarks[14];
-                const mouthOpen = Math.abs(upperLip.y - lowerLip.y);
                 
+                // MOUTH OPEN
+                const upper = landmarks[13]; const lower = landmarks[14];
+                const open = Math.abs(upper.y - lower.y);
+
+                // SMILE (Mouth width)
+                const leftM = landmarks[61]; const rightM = landmarks[291];
+                const smile = Math.abs(leftM.x - rightM.x);
+
+                // EYEBROWS (Anger/Surprise)
+                const browL = landmarks[107]; const browR = landmarks[336]; // Top of brows
+                const eyeL = landmarks[159]; const eyeR = landmarks[386]; // Top of eyes
+                const browDist = (Math.abs(browL.y - eyeL.y) + Math.abs(browR.y - eyeR.y)) / 2;
+
                 const el = document.getElementById('val-expression');
                 const bar = document.getElementById('bar-expression');
                 
-                if(mouthOpen > 0.05) {
-                    el.innerText = "Chanting / Open";
-                    el.style.color = "#eebc51";
-                    bar.style.width = "80%";
-                    bar.classList.replace('bg-purple-500', 'bg-yellow-500');
+                // Logic Thresholds (Approx)
+                if (open > 0.08) {
+                    el.innerText = "Surprise / Chanting"; el.style.color = "#eebc51"; 
+                    bar.style.width = "90%"; bar.className = "h-full w-0 transition-all duration-300 bg-yellow-500";
+                } else if (smile > 0.5) {
+                    el.innerText = "Joy (Hasya)"; el.style.color = "#4ade80"; 
+                    bar.style.width = "100%"; bar.className = "h-full w-0 transition-all duration-300 bg-green-500";
+                } else if (browDist < 0.02) {
+                    el.innerText = "Anger (Raudra)"; el.style.color = "#ff3333"; 
+                    bar.style.width = "80%"; bar.className = "h-full w-0 transition-all duration-300 bg-red-600";
                 } else {
-                    el.innerText = "Serene / Neutral";
-                    el.style.color = "white";
-                    bar.style.width = "20%";
-                    bar.classList.replace('bg-yellow-500', 'bg-purple-500');
+                    el.innerText = "Serene / Neutral"; el.style.color = "white"; 
+                    bar.style.width = "30%"; bar.className = "h-full w-0 transition-all duration-300 bg-purple-500";
                 }
             },
 
             analyzePosture: (landmarks) => {
-                if(!landmarks) return;
-                const left = landmarks[11];
-                const right = landmarks[12];
-                const diff = Math.abs(left.y - right.y);
-                const score = Math.max(0, 100 - (diff * 500));
+                if(!landmarks) return 0;
                 
-                document.getElementById('val-posture').innerText = Math.floor(score) + "%";
-                document.getElementById('bar-posture').style.width = score + "%";
+                const nose = landmarks[0];
+                const leftHip = landmarks[23];
+                const rightHip = landmarks[24];
+                const centerHip = (leftHip.x + rightHip.x)/2;
+                const spineScore = Math.max(0, 100 - (Math.abs(nose.x - centerHip) * 600));
+                
+                const leftShoulder = landmarks[11];
+                const rightShoulder = landmarks[12];
+                const shoulderScore = Math.max(0, 100 - (Math.abs(leftShoulder.y - rightShoulder.y) * 400));
+                
+                const leftElbow = landmarks[13];
+                const rightElbow = landmarks[14];
+                const armSpread = Math.abs(leftElbow.x - rightElbow.x);
+                const armScore = armSpread > 0.3 ? 100 : 50;
+
+                const finalScore = Math.floor((spineScore * 0.4) + (shoulderScore * 0.4) + (armScore * 0.2));
+                state.currentScore = finalScore;
+                
+                document.getElementById('val-posture').innerText = finalScore + "%";
+                document.getElementById('bar-posture').style.width = finalScore + "%";
+                
+                const feedback = document.getElementById('ai-feedback');
+                if(finalScore > 75) {
+                    feedback.innerText = "Excellent posture."; 
+                    feedback.className = "text-xs text-center italic text-green-400";
+                } else {
+                    feedback.innerText = "Adjust alignment."; 
+                    feedback.className = "text-xs text-center italic text-red-400";
+                }
+                
+                return finalScore;
             },
 
-            toggleRecording: async () => {
+            toggleRecording: () => {
                 const btn = document.getElementById('btn-record');
                 const inner = btn.querySelector('div');
                 state.recording = !state.recording;
@@ -698,16 +762,70 @@
                 } else {
                     inner.className = "w-6 h-6 bg-white rounded-sm";
                     btn.classList.remove("scale-110", "ring-4", "ring-red-900");
-                    
-                    const duration = Math.round((new Date() - state.recordStartTime) / 1000);
-                    await practiceSessionsDB.insertOne({
-                        dance: state.dance.name,
-                        lecture: state.lecture.title,
-                        duration: `${Math.floor(duration/60)}m ${duration%60}s`
-                    });
-                    
-                    alert("Practice Session Saved to Database");
+                    app.submitToDatabase();
                 }
+            },
+
+            submitToDatabase: async () => {
+                const modal = document.getElementById('processing-modal');
+                modal.classList.remove('hidden');
+                
+                const duration = Math.round((new Date() - state.recordStartTime) / 1000);
+                const payload = {
+                    userId: 'user_123',
+                    lectureId: state.lecture.id,
+                    score: state.currentScore,
+                    duration: duration,
+                    timestamp: new Date().toISOString()
+                };
+
+                const apiResponse = await api.sendAnalysisData(payload);
+                
+                await practiceSessionsDB.insertOne({
+                    dance: state.dance.name,
+                    lecture: state.lecture.title,
+                    duration: `${Math.floor(duration/60)}m ${duration%60}s`,
+                    score: state.currentScore,
+                    status: apiResponse.data.verified ? "Verified ✅" : "Correction Needed ⚠️"
+                });
+                
+                state.history = await practiceSessionsDB.find();
+                modal.classList.add('hidden');
+                app.switchTab('results'); 
+            },
+
+            renderResults: () => {
+                const container = document.getElementById('results-list');
+                const totalDisplay = document.getElementById('total-score-display');
+                totalDisplay.innerText = state.history.length;
+
+                if (state.history.length === 0) {
+                    container.innerHTML = `<div class="text-center py-12 text-gray-500 italic">No recordings found. Complete a practice session to see results.</div>`;
+                    return;
+                }
+
+                container.innerHTML = state.history.map(s => `
+                    <div class="glass-card p-4 rounded-lg flex items-center justify-between hover:bg-white/5 transition">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center text-[var(--color-primary)]">
+                                <i data-lucide="video" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold">${s.lecture}</h4>
+                                <div class="text-xs text-gray-400 flex gap-2">
+                                    <span>${new Date(s.timestamp).toLocaleDateString()}</span>
+                                    <span>•</span>
+                                    <span>${s.duration}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xl font-bold ${s.score > 80 ? 'text-green-400' : 'text-yellow-400'}">${s.score}%</div>
+                            <div class="text-[10px] uppercase tracking-widest ${s.status.includes('Verified') ? 'text-green-500' : 'text-red-400'}">${s.status}</div>
+                        </div>
+                    </div>
+                `).join('');
+                lucide.createIcons();
             }
         };
 
