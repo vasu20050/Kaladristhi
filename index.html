@@ -181,13 +181,18 @@
 <div id="view-selection"
      class="view-section relative overflow-hidden">
 
-    <!-- Background Image -->
-    <img src="media/img/dancer1.png"
-         class="absolute inset-0 w-full h-full object-cover object-[75%_center] brightness-100 z-0"
-         alt="Dancer Background">
+    <!-- Background Video -->
+    <video
+        autoplay
+        muted
+        loop
+        playsinline
+        class="absolute inset-0 w-full h-full object-cover z-0">
+        <source src="media/video/dancer-bg.mp4" type="video/mp4">
+    </video>
 
-    <!-- Very Light Overlay (for readability only) -->
-    <div class="absolute inset-0 bg-black/20 z-0"></div>
+    <!-- Light overlay for readability -->
+    <div class="absolute inset-0 bg-black/30 z-0"></div>
 
     <header class="fixed top-0 w-full z-50 px-8 py-6 flex items-center justify-between glass-card !border-x-0 !border-t-0 !rounded-none">
         <div class="flex items-center gap-2 cursor-pointer" onclick="router.navigate('entry')">
@@ -204,6 +209,7 @@
     </main>
 
 </div>
+
 
 
     <!-- ============================================== -->
