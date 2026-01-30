@@ -275,14 +275,15 @@
             <!-- TUTORIAL TAB -->
             <div id="content-tutorial" class="tab-content w-full h-full p-4 md:p-8 flex flex-col md:flex-row gap-6 animate-fade-up max-w-7xl mx-auto">
                 <div class="flex-grow bg-zinc-900 rounded-2xl overflow-hidden relative group border border-white/10 shadow-2xl">
-                    <iframe class="w-full h-full object-cover" 
-                            src="https://www.youtube.com/embed/SgiLOz3bFf4?si=6s8V2l1S3f0wY3k8" 
-                            title="Bharatanatyam Basic Steps" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            referrerpolicy="strict-origin-when-cross-origin" 
-                            allowfullscreen>
-                    </iframe>
+                 <video
+    class="w-full h-full object-cover"
+    controls
+    autoplay
+    muted
+>
+    <source src="media/vid/dancer-bg.mp4" type="video/mp4">
+</video>
+   
                 </div>
                 <div class="w-full md:w-80 flex-shrink-0 glass-card p-6 rounded-2xl h-fit">
                     <h4 class="text-[var(--color-primary)] font-bold uppercase text-xs tracking-widest mb-4">Guru's Notes</h4>
@@ -336,13 +337,15 @@
               <!-- LEFT SIDE TUTORIAL VIDEO -->
 <div id="practice-tutorial-video" 
      class="absolute top-20 left-8 w-72 h-40 bg-black rounded-xl overflow-hidden shadow-2xl z-30 cursor-move">
-    <iframe src="https://www.youtube.com/embed/Hdai7FJrQ5Q?autoplay=1&mute=1"
-            class="w-full h-full object-cover pointer-events-none"
-            title="Tutorial Video"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-    </iframe>
+    <video
+    class="w-full h-full object-cover pointer-events-none"
+    autoplay
+    muted
+    loop
+>
+    <source src="media/vid/dancer-bg.mp4" type="video/mp4">
+</video>
+
 </div>
 
 <script>
