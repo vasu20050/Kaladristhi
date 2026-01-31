@@ -858,7 +858,7 @@ if (
                 ctx.clearRect(0,0,cvs.width,cvs.height);
             },
 
-            analyzeExpression: (landmarks) => {
+             analyzeExpression: (landmarks) => {
                 if(!landmarks) return;
                 
                 // MOUTH OPEN
@@ -891,6 +891,43 @@ if (
                     el.innerText = "Serene / Neutral"; el.style.color = "white"; 
                     bar.style.width = "30%"; bar.className = "h-full w-0 transition-all duration-300 bg-purple-500";
                 }
+            },
+
+            analyzePosture: (landmarks) => {
+                if(!landmarks) return 0;
+                
+                const nose = landmarks[0];
+                const leftHip = landmarks[23];
+                const rightHip = landmarks[24];
+                const centerHip = (leftHip.x + rightHip.x)/2;
+                const spineScore = Math.max(0, 100 - (Math.abs(nose.x - centerHip) * 600));
+                
+                const leftShoulder = landmarks[11];
+                const rightShoulder = landmarks[12];
+                const shoulderScore = Math.max(0, 100 - (Math.abs(leftShoulder.y - rightShoulder.y) * 400));
+                
+                const leftElbow = landmarks[13];
+                const rightElbow = landmarks[14];
+                const armSpread = Math.abs(leftElbow.x - rightElbow.x);
+                const armScore = armSpread > 0.3 ? 100 : 50;
+
+                const finalScore = Math.floor((spineScore * 0.4) + (shoulderScore * 0.4) + (armScore * 0.2));
+                state.currentScore = finalScore;
+                
+                document.getElementById('val-posture').innerText = finalScore + "%";
+                document.getElementById('bar-posture').style.width = finalScore + "%";
+                
+                const feedback = document.getElementById('ai-feedback');
+                if(finalScore > 75) {
+                    feedback.innerText = "Excellent posture."; 
+                    feedback.className = "text-xs text-center italic text-green-400";
+                } else {
+                    feedback.innerText = "Adjust alignment."; 
+                    feedback.className = "text-xs text-center italic text-red-400";
+                }
+                
+                return finalScore;
+            },
             detectBhumiPranam: (results) => {
     if (!results.poseLandmarks || !results.leftHandLandmarks || !results.rightHandLandmarks) {
         return { done: false, step: "Pose not visible" };
@@ -947,43 +984,7 @@ if (
     state.poseConfirmed = false;
     return { done: false, step: "Perform Bhumi Pranam steps" };
 },
-},
 
-            analyzePosture: (landmarks) => {
-                if(!landmarks) return 0;
-                
-                const nose = landmarks[0];
-                const leftHip = landmarks[23];
-                const rightHip = landmarks[24];
-                const centerHip = (leftHip.x + rightHip.x)/2;
-                const spineScore = Math.max(0, 100 - (Math.abs(nose.x - centerHip) * 600));
-                
-                const leftShoulder = landmarks[11];
-                const rightShoulder = landmarks[12];
-                const shoulderScore = Math.max(0, 100 - (Math.abs(leftShoulder.y - rightShoulder.y) * 400));
-                
-                const leftElbow = landmarks[13];
-                const rightElbow = landmarks[14];
-                const armSpread = Math.abs(leftElbow.x - rightElbow.x);
-                const armScore = armSpread > 0.3 ? 100 : 50;
-
-                const finalScore = Math.floor((spineScore * 0.4) + (shoulderScore * 0.4) + (armScore * 0.2));
-                state.currentScore = finalScore;
-                
-                document.getElementById('val-posture').innerText = finalScore + "%";
-                document.getElementById('bar-posture').style.width = finalScore + "%";
-                
-                const feedback = document.getElementById('ai-feedback');
-                if(finalScore > 75) {
-                    feedback.innerText = "Excellent posture."; 
-                    feedback.className = "text-xs text-center italic text-green-400";
-                } else {
-                    feedback.innerText = "Adjust alignment."; 
-                    feedback.className = "text-xs text-center italic text-red-400";
-                }
-                
-                return finalScore;
-            },
 
             toggleRecording: () => {
     const btn = document.getElementById('btn-record');
