@@ -336,56 +336,54 @@
                 </div>
               <!-- LEFT SIDE TUTORIAL VIDEO -->
 <div id="practice-tutorial-video" 
-     class="absolute top-20 left-8 w-72 h-40 bg-black rounded-xl overflow-hidden shadow-2xl z-30 cursor-move">
-    <video
-    class="w-full h-full object-cover pointer-events-none"
-    autoplay
-    muted
-    loop
->
-    <source src="media/vid/dancer-bg.mp4" type="video/mp4">
-</video>
+     class="absolute top-20 left-8 w-72 bg-black rounded-xl overflow-hidden shadow-2xl z-30 cursor-move">
 
+    <video
+        id="tutorialVideo"
+        class="w-full aspect-video bg-black"
+        controls
+        preload="metadata"
+    >
+        <source src="media/vid/dancer-bg.mp4" type="video/mp4">
+        Your browser does not support video.
+    </video>
 </div>
 
+
+
 <script>
-    const videoBox = document.getElementById('practice-tutorial-video');
-    let isDragging = false;
-    let startX, startY;
-    let initialLeft, initialTop;
+const videoBox = document.getElementById('practice-tutorial-video');
+const video = document.getElementById('tutorialVideo');
 
-    videoBox.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
+let isDragging = false;
+let startX, startY, initialLeft, initialTop;
 
-        const rect = videoBox.getBoundingClientRect();
-        initialLeft = rect.left;
-        initialTop = rect.top;
+// Drag ONLY when clicking outside video controls
+videoBox.addEventListener('mousedown', (e) => {
+    if (e.target === video) return; // allow seeking
 
-        e.preventDefault(); // Prevent text selection
-    });
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
 
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
+    const rect = videoBox.getBoundingClientRect();
+    initialLeft = rect.left;
+    initialTop = rect.top;
+});
 
-        let deltaX = e.clientX - startX;
-        let deltaY = e.clientY - startY;
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
 
-        let newLeft = initialLeft + deltaX;
-        let newTop = initialTop + deltaY;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
 
-        // Keep inside window
-        newLeft = Math.max(0, Math.min(window.innerWidth - videoBox.offsetWidth, newLeft));
-        newTop = Math.max(0, Math.min(window.innerHeight - videoBox.offsetHeight, newTop));
+    videoBox.style.left = initialLeft + dx + "px";
+    videoBox.style.top = initialTop + dy + "px";
+});
 
-        videoBox.style.left = newLeft + 'px';
-        videoBox.style.top = newTop + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+});
 </script>
 
 
