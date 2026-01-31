@@ -143,28 +143,22 @@
  <!-- ============================================== -->
 <!-- VIEW 2: ENTRY -->
 <!-- ============================================== -->
-<div id="view-entry" class="view-section items-end pb-20 px-8 md:px-24 relative">
+<div id="view-entry" class="view-section relative items-end pb-20 px-8 md:px-24 overflow-hidden">
 
-    <!-- BACKGROUND VIDEO + OVERLAY -->
-    <div class="absolute inset-0 z-0 overflow-hidden">
+    <!-- BACKGROUND VIDEO -->
+    <video 
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        class="absolute inset-0 w-full h-full object-cover opacity-30 z-0"
+    >
+        <source src="media/vid/dancer-bg1.webm" type="video/webm">
+        Your browser does not support the video tag.
+    </video>
 
-        <video 
-            autoplay 
-            muted 
-            loop 
-            playsinline
-            class="w-full h-full object-cover opacity-30"
-        >
-            <source src="media/vid/dancer-bg1.webm" type="video/webm">
-            Your browser does not support the video tag.
-        </video>
-
-        <!-- Dark overlay -->
-        <div class="absolute inset-0 bg-[var(--color-bg-dark)]/80"></div>
-
-    </div>
-
-</div>
+    <!-- Dark overlay -->
+    <div class="absolute inset-0 bg-[var(--color-bg-dark)]/80 z-0"></div>
 
     <!-- CONTENT -->
     <div class="relative z-10 max-w-2xl animate-fade-up">
@@ -172,24 +166,29 @@
             Step into the <br>
             <span class="text-[var(--color-primary)] italic">Sacred Circle.</span>
         </h2>
+
         <p class="text-[var(--color-text-muted)] mb-10 text-lg leading-relaxed max-w-md">
             Experience Indian classical dance with AI-assisted posture correction and detailed expression analysis.
         </p>
-        <button onclick="router.navigate('selection')" 
-                class="group flex items-center gap-4 px-10 py-4 glass-card hover:bg-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all duration-500 rounded-full">
-            <span class="uppercase tracking-widest font-bold text-sm group-hover:text-black">Begin Journey</span>
-            <i data-lucide="arrow-right" class="w-5 h-5 group-hover:text-black group-hover:translate-x-2 transition-transform"></i>
+
+        <button 
+            onclick="router.navigate('selection')" 
+            class="group flex items-center gap-4 px-10 py-4 glass-card hover:bg-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all duration-500 rounded-full"
+        >
+            <span class="uppercase tracking-widest font-bold text-sm group-hover:text-black">
+                Begin Journey
+            </span>
+            <i data-lucide="arrow-right"
+               class="w-5 h-5 group-hover:text-black group-hover:translate-x-2 transition-transform"></i>
         </button>
     </div>
+
 </div>
 
-
-
-   <!-- ============================================== -->
+<!-- ============================================== -->
 <!-- VIEW 3: SELECTION -->
 <!-- ============================================== -->
-<div id="view-selection"
-     class="view-section relative overflow-hidden">
+<div id="view-selection" class="view-section relative overflow-hidden">
 
     <!-- Background Video -->
     <video
@@ -201,7 +200,7 @@
         <source src="media/vid/dancer-bg1.webm" type="video/webm">
     </video>
 
-    <!-- Light overlay for readability -->
+    <!-- Overlay -->
     <div class="absolute inset-0 bg-black/30 z-0"></div>
 
     <header class="fixed top-0 w-full z-50 px-8 py-6 flex items-center justify-between glass-card !border-x-0 !border-t-0 !rounded-none">
@@ -219,6 +218,7 @@
     </main>
 
 </div>
+
 
 
 
