@@ -576,7 +576,9 @@ function resizeTutorial(action) {
     // 👇 ADD THESE (NEW)
     poseHoldStart: null,
     poseConfirmed: false,
-    autoAdvanced: false
+    autoAdvanced: false,
+    postureHistory: [],
+
 };
 
 
@@ -912,22 +914,34 @@ if (
                 const armScore = armSpread > 0.3 ? 100 : 50;
 
                 const finalScore = Math.floor((spineScore * 0.4) + (shoulderScore * 0.4) + (armScore * 0.2));
-                state.currentScore = finalScore;
-                
-                document.getElementById('val-posture').innerText = finalScore + "%";
-                document.getElementById('bar-posture').style.width = finalScore + "%";
-                
-                const feedback = document.getElementById('ai-feedback');
-                if(finalScore > 75) {
-                    feedback.innerText = "Excellent posture."; 
-                    feedback.className = "text-xs text-center italic text-green-400";
-                } else {
-                    feedback.innerText = "Adjust alignment."; 
-                    feedback.className = "text-xs text-center italic text-red-400";
-                }
-                
-                return finalScore;
-            },
+                // ---- TEMPORAL SMOOTHING (POSE STABILITY) ----
+state.postureHistory.push(finalScore);
+
+// keep last ~30 frames (~1 second)
+if (state.postureHistory.length > 30) {
+    state.postureHistory.shift();
+}
+
+const stableScore = Math.round(
+    state.postureHistory.reduce((a, b) => a + b, 0) / state.postureHistory.length
+);
+
+state.currentScore = stableScore;
+
+document.getElementById('val-posture').innerText = stableScore + "%";
+document.getElementById('bar-posture').style.width = stableScore + "%";
+
+const feedback = document.getElementById('ai-feedback');
+if (stableScore > 75) {
+    feedback.innerText = "Posture stable over time.";
+    feedback.className = "text-xs text-center italic text-green-400";
+} else {
+    feedback.innerText = "Posture unstable, adjust alignment.";
+    feedback.className = "text-xs text-center italic text-red-400";
+}
+
+return stableScore;},
+
             detectBhumiPranam: (results) => {
     if (!results.poseLandmarks || !results.leftHandLandmarks || !results.rightHandLandmarks) {
         return { done: false, step: "Pose not visible" };
