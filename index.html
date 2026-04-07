@@ -914,9 +914,8 @@
                 const analysis = app.analyzePosture(results.poseLandmarks, trackingConfidence); 
                 app.captureAccuracySample(analysis, trackingConfidence);
                 
-                // CRITICAL FIX: Increased threshold to 84% and added strict confidence requirement.
-                // Professional dance requires high precision; sitting in front of a camera is no longer "Correct".
-                const isCorrect = (analysis >= 84 && trackingConfidence >= 75);
+                // RESTORED: Critical logic for color feedback
+                const isCorrect = (analysis >= 80 && trackingConfidence >= 65);
                 let feedbackColor = isCorrect ? '#00e5ff' : '#ff3b30'; 
                 const skeletonGlow = isCorrect ? 'rgba(0, 229, 255, 0.45)' : 'rgba(255, 59, 48, 0.45)';
 
@@ -929,7 +928,7 @@
                         app.drawBodyTracking(ctx, results.poseLandmarks, feedbackColor, trackingConfidence);
                     }
                     
-                    // NEW: Full Hand tracking drawing for better gesture visibility
+                    // Full Finger & Hand Tracking for Mudras
                     if (results.leftHandLandmarks) {
                         drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
                         drawLandmarks(ctx, results.leftHandLandmarks, {color: '#ffffff', fillColor: feedbackColor, radius: 2});
