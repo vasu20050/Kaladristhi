@@ -779,13 +779,12 @@
             initHolistic: () => {
                 const holistic = new Holistic({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}` });
                 holistic.setOptions({
-                    modelComplexity: 2, // Upgraded for much higher accuracy in complex dance poses
+                    modelComplexity: 2,
                     smoothLandmarks: true,
                     enableSegmentation: false,
-                    smoothSegmentation: false,
                     refineFaceLandmarks: false,
-                    minDetectionConfidence: 0.7, // Slightly higher for better initial lock
-                    minTrackingConfidence: 0.7  // Slightly higher for more stable skeletons
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
                 });
                 holistic.onResults(app.onResults);
                 return holistic;
@@ -921,32 +920,25 @@
                 let feedbackColor = isCorrect ? '#00e5ff' : '#ff3b30'; 
                 const skeletonGlow = isCorrect ? 'rgba(0, 229, 255, 0.45)' : 'rgba(255, 59, 48, 0.45)';
 
-                // Draw a bounding box frame if tracking exists (interpreting "framemark" request)
-                if (results.poseLandmarks) {
-                    const lms = results.poseLandmarks;
-                    const xs = lms.map(p => p.x);
-                    const ys = lms.map(p => p.y);
-                    const minX = Math.min(...xs); const maxX = Math.max(...xs);
-                    const minY = Math.min(...ys); const maxY = Math.max(...ys);
-                    
-                    ctx.save();
-                    ctx.strokeStyle = feedbackColor;
-                    ctx.lineWidth = 2;
-                    ctx.setLineDash([8, 8]);
-                    ctx.strokeRect(
-                        (minX * canvas.width) - 30, 
-                        (minY * canvas.height) - 50, 
-                        ((maxX - minX) * canvas.width) + 60, 
-                        ((maxY - minY) * canvas.height) + 100
-                    );
-                    ctx.restore();
-                }
-
-                if (state.showLandmarks && results.poseLandmarks) {
+                if (state.showLandmarks) {
                     ctx.save();
                     ctx.shadowBlur = 12;
                     ctx.shadowColor = skeletonGlow;
-                    app.drawBodyTracking(ctx, results.poseLandmarks, feedbackColor, trackingConfidence);
+                    
+                    if (results.poseLandmarks) {
+                        app.drawBodyTracking(ctx, results.poseLandmarks, feedbackColor, trackingConfidence);
+                    }
+                    
+                    // NEW: Full Hand tracking drawing for better gesture visibility
+                    if (results.leftHandLandmarks) {
+                        drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
+                        drawLandmarks(ctx, results.leftHandLandmarks, {color: '#ffffff', fillColor: feedbackColor, radius: 2});
+                    }
+                    if (results.rightHandLandmarks) {
+                        drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
+                        drawLandmarks(ctx, results.rightHandLandmarks, {color: '#ffffff', fillColor: feedbackColor, radius: 2});
+                    }
+                    
                     ctx.restore();
                 }
 
