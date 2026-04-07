@@ -313,20 +313,10 @@
                 <!-- RIGHT SIDE: AI Panel (Fixed) -->
                 <div id="ai-panel" class="absolute top-20 right-8 w-72 glass-card p-5 rounded-xl z-20 transform translate-x-[150%] transition-transform duration-500">
                     <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
-                        <span class="text-[var(--color-primary)] font-display text-lg">Holistic Analysis</span>
+                        <span class="text-[var(--color-primary)] font-display text-lg">Pose Tracking</span>
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] uppercase text-gray-400">Status:</span>
                             <div id="status-indicator" class="w-2 h-2 rounded-full bg-gray-500"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <div class="flex justify-between text-xs text-gray-400 mb-1">
-                            <span>Expression</span>
-                            <span id="val-expression" class="text-white">Neutral</span>
-                        </div>
-                        <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
-                            <div id="bar-expression" class="h-full bg-purple-500 w-0 transition-all duration-300"></div>
                         </div>
                     </div>
                     
@@ -499,28 +489,56 @@ function resizeTutorial(action) {
         // --- API INTEGRATION CLASS ---
         class KaladrishtiAPI {
             constructor(baseUrl) {
-                this.baseUrl = baseUrl || 'https://api.kaladrishti.com/v1'; // Placeholder
+                this.baseUrl = baseUrl || 'http://localhost:3001/api';
             }
 
-            // Simulates sending video/pose data to backend
             async sendAnalysisData(sessionData) {
-                console.log("Sending data to API:", sessionData);
-                
-                // MOCK API DELAY & RESPONSE
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        // Mocking logic: Score calculated locally but verified by "server"
-                        const isVerified = sessionData.score > 70;
-                        resolve({
-                            status: 200,
-                            data: {
-                                verified: isVerified,
-                                serverMessage: isVerified ? "Excellent alignment verified." : "Improvement needed in posture.",
-                                correctionPoints: ["Spine straightness", "Elbow height"]
-                            }
-                        });
-                    }, 5000);
+                const response = await fetch(`${this.baseUrl}/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(sessionData)
+                }).catch((error) => {
+                    console.warn('Backend unavailable, falling back to local analysis.', error);
+                    return null;
                 });
+
+                if (!response || !response.ok) {
+                    return {
+                        status: 200,
+                        data: this.runLocalFallback(sessionData)
+                    };
+                }
+
+                return response.json();
+            }
+
+            runLocalFallback(sessionData) {
+                const summary = sessionData.accuracySummary || {};
+                const postureMetrics = summary.postureMetrics || {};
+                const blendedScore = Math.round(
+                    ((sessionData.score || 0) * 0.4) +
+                    ((summary.averageScore || 0) * 0.25) +
+                    ((summary.averageTrackingConfidence || 0) * 0.2) +
+                    ((summary.stabilityScore || 0) * 0.15)
+                );
+
+                const correctionPoints = [];
+                if ((postureMetrics.spineScore || 100) < 70) correctionPoints.push('Spine alignment');
+                if ((postureMetrics.balanceScore || 100) < 70) correctionPoints.push('Shoulder and hip balance');
+                if ((postureMetrics.lowerBodyScore || 100) < 70) correctionPoints.push('Stance depth and lower body stability');
+                if ((summary.averageTrackingConfidence || 100) < 60) correctionPoints.push('Camera framing and full-body visibility');
+
+                return {
+                    verified: blendedScore >= 72,
+                    accuracy: blendedScore,
+                    serverMessage: blendedScore >= 72
+                        ? 'Good alignment verified from session tracking.'
+                        : 'Accuracy is still inconsistent. Refine the highlighted posture areas.',
+                    correctionPoints: correctionPoints.length ? correctionPoints : ['Maintain the same posture consistently'],
+                    source: 'frontend-fallback'
+                };
             }
         }
         const api = new KaladrishtiAPI();
@@ -572,6 +590,18 @@ function resizeTutorial(action) {
     currentScore: 0,
     loopId: null,
     showLandmarks: true,
+    holisticReady: false,
+    holisticWarmupPromise: null,
+    processingFrame: false,
+    cameraStream: null,
+    lastGoodPostureScore: 0,
+    lastTrackingConfidence: 0,
+    latestPostureDetails: null,
+    recordingMetrics: {
+        scores: [],
+        tracking: [],
+        postureDetails: []
+    },
 
     // 👇 ADD THESE (NEW)
     poseHoldStart: null,
@@ -606,6 +636,9 @@ function resizeTutorial(action) {
                 lucide.createIcons();
                 app.renderDances();
                 state.history = await practiceSessionsDB.find();
+                setTimeout(() => {
+                    app.warmupHolistic();
+                }, 300);
                 setTimeout(() => {
                     document.getElementById('view-landing').style.display = 'none';
                     router.navigate('entry');
@@ -689,16 +722,42 @@ function resizeTutorial(action) {
             initHolistic: () => {
                 const holistic = new Holistic({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`});
                 holistic.setOptions({
-                    modelComplexity: 1,
+                    modelComplexity: 2, // Upgraded for much higher accuracy in complex dance poses
                     smoothLandmarks: true,
                     enableSegmentation: false, 
                     smoothSegmentation: false,
-                    refineFaceLandmarks: true,
-                    minDetectionConfidence: 0.5,
-                    minTrackingConfidence: 0.5
+                    refineFaceLandmarks: false,
+                    minDetectionConfidence: 0.7, // Slightly higher for better initial lock
+                    minTrackingConfidence: 0.7  // Slightly higher for more stable skeletons
                 });
                 holistic.onResults(app.onResults);
                 return holistic;
+            },
+
+            warmupHolistic: async () => {
+                if (state.holisticReady) return;
+                if (state.holisticWarmupPromise) return state.holisticWarmupPromise;
+
+                if (!state.holistic) state.holistic = app.initHolistic();
+
+                state.holisticWarmupPromise = (async () => {
+                    try {
+                        const warmupCanvas = document.createElement('canvas');
+                        warmupCanvas.width = 256;
+                        warmupCanvas.height = 256;
+                        const warmCtx = warmupCanvas.getContext('2d');
+                        warmCtx.fillStyle = '#111';
+                        warmCtx.fillRect(0, 0, warmupCanvas.width, warmupCanvas.height);
+                        await state.holistic.send({ image: warmupCanvas });
+                        state.holisticReady = true;
+                    } catch (err) {
+                        console.warn('Holistic warmup delayed:', err);
+                    } finally {
+                        state.holisticWarmupPromise = null;
+                    }
+                })();
+
+                return state.holisticWarmupPromise;
             },
 
             startCamera: async () => {
@@ -707,28 +766,55 @@ function resizeTutorial(action) {
                 const placeholder = document.getElementById('camera-placeholder');
                 const loader = document.getElementById('ai-loading');
 
+                if (state.loopId) cancelAnimationFrame(state.loopId);
+                state.processingFrame = false;
+
                 placeholder.style.display = 'none';
                 loader.style.display = 'flex';
                 
                 try {
-                    // INSTANT START: Get stream and play immediately
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { width: 1280, height: 720, facingMode: "user" } 
-                    });
-                    video.srcObject = stream;
+                    if (!state.cameraStream || !state.cameraStream.getVideoTracks().some(track => track.readyState === 'live')) {
+                        state.cameraStream = await navigator.mediaDevices.getUserMedia({
+                            video: {
+                                facingMode: { ideal: "user" },
+                                width: { ideal: 960 },
+                                height: { ideal: 540 },
+                                frameRate: { ideal: 30, max: 30 }
+                            },
+                            audio: false
+                        });
+                    }
+
+                    video.srcObject = state.cameraStream;
                     await video.play();
+                    loader.style.display = 'none';
                     
-                    // START AI IN BACKGROUND
+                    // Warmup in background so first tracked frame appears faster.
+                    app.warmupHolistic();
+
                     if(!state.holistic) state.holistic = app.initHolistic();
                     
-                    // Custom loop for control
-                    const sendFrame = async () => {
+                    // Controlled loop: avoid overlapping sends + keep stable FPS.
+                    const targetFrameInterval = 1000 / 24;
+                    let lastSentAt = 0;
+                    const sendFrame = async (timestamp) => {
                         if(state.mode === 'camera' && !video.paused && !video.ended) {
-                            await state.holistic.send({image: video});
+                            if ((timestamp - lastSentAt) < targetFrameInterval || state.processingFrame) {
+                                state.loopId = requestAnimationFrame(sendFrame);
+                                return;
+                            }
+
+                            lastSentAt = timestamp;
+                            state.processingFrame = true;
+                            try {
+                                await state.holistic.send({image: video});
+                            } finally {
+                                state.processingFrame = false;
+                            }
                             state.loopId = requestAnimationFrame(sendFrame);
                         }
                     };
-                    sendFrame();
+                    state.loopId = requestAnimationFrame(sendFrame);
 
                 } catch (e) {
                     console.error(e);
@@ -768,8 +854,17 @@ function resizeTutorial(action) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 if(state.mode === 'image') ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
                 
-                const analysis = app.analyzePosture(results.poseLandmarks); 
-                let feedbackColor = analysis > 75 ? '#00eaff' : '#ff3333';
+                const trackingConfidence = app.measureTrackingConfidence(results.poseLandmarks);
+                const analysis = app.analyzePosture(results.poseLandmarks, trackingConfidence); 
+                app.captureAccuracySample(analysis, trackingConfidence);
+                
+                // Color mapping: Blue (Good), Amber (Partial/Focus), Red (Poor/Hidden)
+                let feedbackColor = '#ff3b30'; // Red default
+                if (analysis >= 75 && trackingConfidence >= 65) {
+                    feedbackColor = '#14b8ff'; // Professional Blue
+                } else if (analysis >= 50 && trackingConfidence >= 45) {
+                    feedbackColor = '#ffcc00'; // Amber/Warning
+                }
 
 if (
     state.dance?.id === 'bharatanatyam' &&
@@ -782,28 +877,12 @@ if (
                 
                 // CONDITIONAL DRAWING BASED ON TOGGLE
                 if (state.showLandmarks) {
-                    // 1. Pose: Body
-                    drawConnectors(ctx, results.poseLandmarks, POSE_CONNECTIONS, {color: feedbackColor, lineWidth: 3});
-                    drawLandmarks(ctx, results.poseLandmarks, {color: '#eebc51', lineWidth: 1, radius: 3, fillColor: feedbackColor});
-
-                    // 2. Hands
-                    drawConnectors(ctx, results.leftHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
-                    drawLandmarks(ctx, results.leftHandLandmarks, {color: '#eebc51', lineWidth: 1, radius: 2});
-                    drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
-                    drawLandmarks(ctx, results.rightHandLandmarks, {color: '#eebc51', lineWidth: 1, radius: 2});
-
-                    // 3. Face: Only KEY Features (No full mesh)
-                    if (results.faceLandmarks) {
-                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_FACE_OVAL, {color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1});
-                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LEFT_EYE, {color: '#eebc51', lineWidth: 1});
-                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_RIGHT_EYE, {color: '#eebc51', lineWidth: 1});
-                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LIPS, {color: '#ff3333', lineWidth: 1});
+                    if (results.poseLandmarks) {
+                        app.drawBodyTracking(ctx, results.poseLandmarks, feedbackColor, trackingConfidence);
                     }
                 }
                 
                 ctx.restore();
-
-                app.analyzeExpression(results.faceLandmarks);
                 // --- BHUMI PRANAM LOGIC (ONLY Lecture 1) ---
 if (
     state.dance?.id === 'bharatanatyam' &&
@@ -832,8 +911,10 @@ if (
 
                 
                 const statusInd = document.getElementById('status-indicator');
-                if (analysis > 75) statusInd.classList.replace('bg-red-500', 'bg-green-500') || statusInd.classList.add('bg-green-500');
-                else statusInd.classList.replace('bg-green-500', 'bg-red-500') || statusInd.classList.add('bg-red-500');
+                statusInd.classList.remove('bg-gray-500', 'bg-red-500', 'bg-green-500', 'bg-yellow-500');
+                if (analysis >= 75 && trackingConfidence >= 65) statusInd.classList.add('bg-green-500');
+                else if (trackingConfidence >= 45) statusInd.classList.add('bg-yellow-500');
+                else statusInd.classList.add('bg-red-500');
 
                 document.getElementById('ai-panel').classList.remove('translate-x-[150%]');
                 document.getElementById('cam-controls').style.opacity = '1';
@@ -842,11 +923,14 @@ if (
 
             stopCamera: () => {
                 if(state.loopId) cancelAnimationFrame(state.loopId);
+                state.loopId = null;
+                state.processingFrame = false;
                 const video = document.getElementById('webcam');
                 if (video.srcObject) {
                     video.srcObject.getTracks().forEach(t => t.stop());
                     video.srcObject = null;
                 }
+                state.cameraStream = null;
                 
                 document.getElementById('camera-placeholder').style.display = 'flex';
                 document.getElementById('ai-panel').classList.add('translate-x-[150%]');
@@ -856,77 +940,262 @@ if (
                 const cvs = document.getElementById('output_canvas');
                 const ctx = cvs.getContext('2d');
                 ctx.clearRect(0,0,cvs.width,cvs.height);
+
+                state.lastGoodPostureScore = 0;
+                state.lastTrackingConfidence = 0;
+                state.latestPostureDetails = null;
+                app.resetRecordingMetrics();
+                document.getElementById('val-posture').innerText = '0%';
+                document.getElementById('bar-posture').style.width = '0%';
             },
 
-             analyzeExpression: (landmarks) => {
-                if(!landmarks) return;
-                
-                // MOUTH OPEN
-                const upper = landmarks[13]; const lower = landmarks[14];
-                const open = Math.abs(upper.y - lower.y);
+            updateTrackingUI: (confidence, message, tone = 'idle') => {
+                state.lastTrackingConfidence = confidence;
+                if (!message) return;
+                const feedback = document.getElementById('ai-feedback');
+                if (tone === 'good') feedback.className = 'text-xs text-center italic text-green-400';
+                else if (tone === 'warn') feedback.className = 'text-xs text-center italic text-yellow-300';
+                else feedback.className = 'text-xs text-center italic text-red-400';
+                feedback.innerText = message;
+            },
 
-                // SMILE (Mouth width)
-                const leftM = landmarks[61]; const rightM = landmarks[291];
-                const smile = Math.abs(leftM.x - rightM.x);
+            drawBodyTracking: (ctx, landmarks, color, trackingConfidence) => {
+                const minimumVisibility = trackingConfidence >= 70 ? 0.4 : 0.55;
+                const visibleConnections = POSE_CONNECTIONS.filter(([startIndex, endIndex]) => {
+                    const start = landmarks[startIndex];
+                    const end = landmarks[endIndex];
+                    return start && end && app.getVisibilityScore(start) >= minimumVisibility && app.getVisibilityScore(end) >= minimumVisibility;
+                });
+                const visibleLandmarks = landmarks.filter((landmark) => app.getVisibilityScore(landmark) >= minimumVisibility);
 
-                // EYEBROWS (Anger/Surprise)
-                const browL = landmarks[107]; const browR = landmarks[336]; // Top of brows
-                const eyeL = landmarks[159]; const eyeR = landmarks[386]; // Top of eyes
-                const browDist = (Math.abs(browL.y - eyeL.y) + Math.abs(browR.y - eyeR.y)) / 2;
+                drawConnectors(ctx, landmarks, visibleConnections, {
+                    color: 'rgba(255, 255, 255, 0.18)',
+                    lineWidth: 7
+                });
+                drawConnectors(ctx, landmarks, visibleConnections, {
+                    color,
+                    lineWidth: trackingConfidence >= 70 ? 4 : 3
+                });
+                drawLandmarks(ctx, visibleLandmarks, {
+                    color,
+                    fillColor: color,
+                    lineWidth: 1,
+                    radius: trackingConfidence >= 70 ? 4 : 3
+                });
+            },
 
-                const el = document.getElementById('val-expression');
-                const bar = document.getElementById('bar-expression');
-                
-                // Logic Thresholds (Approx)
-                if (open > 0.08) {
-                    el.innerText = "Surprise / Chanting"; el.style.color = "#eebc51"; 
-                    bar.style.width = "90%"; bar.className = "h-full w-0 transition-all duration-300 bg-yellow-500";
-                } else if (smile > 0.5) {
-                    el.innerText = "Joy (Hasya)"; el.style.color = "#4ade80"; 
-                    bar.style.width = "100%"; bar.className = "h-full w-0 transition-all duration-300 bg-green-500";
-                } else if (browDist < 0.02) {
-                    el.innerText = "Anger (Raudra)"; el.style.color = "#ff3333"; 
-                    bar.style.width = "80%"; bar.className = "h-full w-0 transition-all duration-300 bg-red-600";
-                } else {
-                    el.innerText = "Serene / Neutral"; el.style.color = "white"; 
-                    bar.style.width = "30%"; bar.className = "h-full w-0 transition-all duration-300 bg-purple-500";
+            getVisibilityScore: (landmark) => {
+                if (!landmark) return 0;
+                if (typeof landmark.visibility === 'number') return landmark.visibility;
+                return 0.75;
+            },
+
+            resetRecordingMetrics: () => {
+                state.recordingMetrics = {
+                    scores: [],
+                    tracking: [],
+                    postureDetails: []
+                };
+            },
+
+            captureAccuracySample: (score, trackingConfidence) => {
+                if (!state.recording) return;
+
+                state.recordingMetrics.scores.push(score);
+                state.recordingMetrics.tracking.push(trackingConfidence);
+                if (state.latestPostureDetails) {
+                    state.recordingMetrics.postureDetails.push({ ...state.latestPostureDetails });
                 }
+
+                if (state.recordingMetrics.scores.length > 300) state.recordingMetrics.scores.shift();
+                if (state.recordingMetrics.tracking.length > 300) state.recordingMetrics.tracking.shift();
+                if (state.recordingMetrics.postureDetails.length > 300) state.recordingMetrics.postureDetails.shift();
             },
 
-            analyzePosture: (landmarks) => {
-                if(!landmarks) return 0;
-                
-                const nose = landmarks[0];
-                const leftHip = landmarks[23];
-                const rightHip = landmarks[24];
-                const centerHip = (leftHip.x + rightHip.x)/2;
-                const spineScore = Math.max(0, 100 - (Math.abs(nose.x - centerHip) * 600));
-                
+            buildAccuracySummary: () => {
+                const { scores, tracking, postureDetails } = state.recordingMetrics;
+                if (!scores.length) {
+                    return {
+                        averageScore: state.currentScore,
+                        bestScore: state.currentScore,
+                        averageTrackingConfidence: state.lastTrackingConfidence,
+                        stabilityScore: 0,
+                        postureMetrics: state.latestPostureDetails || {}
+                    };
+                }
+
+                const average = (values) => Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
+                const averageScore = average(scores);
+                const bestScore = Math.max(...scores);
+                const averageTrackingConfidence = average(tracking);
+                const stableSamples = scores.filter((value, index) => {
+                    const previous = index === 0 ? value : scores[index - 1];
+                    return Math.abs(value - previous) <= 8;
+                }).length;
+                const stabilityScore = Math.round((stableSamples / scores.length) * 100);
+
+                const postureMetrics = postureDetails.length
+                    ? Object.keys(postureDetails[0]).reduce((result, key) => {
+                        result[key] = average(postureDetails.map((detail) => detail[key] || 0));
+                        return result;
+                    }, {})
+                    : (state.latestPostureDetails || {});
+
+                return {
+                    averageScore,
+                    bestScore,
+                    averageTrackingConfidence,
+                    stabilityScore,
+                    postureMetrics
+                };
+            },
+
+            measureTrackingConfidence: (landmarks) => {
+                if (!landmarks) {
+                    app.updateTrackingUI(0, 'Body not detected. Step back and face the camera.', 'error');
+                    return 0;
+                }
+
+                const coreIndices = [0, 11, 12, 23, 24, 25, 26, 27, 28];
+                const coreVisibility = coreIndices.map((index) => app.getVisibilityScore(landmarks[index]));
+                const averageVisibility = coreVisibility.reduce((sum, value) => sum + value, 0) / coreVisibility.length;
+                const visibleCorePoints = coreVisibility.filter((value) => value > 0.35).length;
+                const shoulderWidth = Math.abs((landmarks[11]?.x ?? 0) - (landmarks[12]?.x ?? 0));
+                const hipWidth = Math.abs((landmarks[23]?.x ?? 0) - (landmarks[24]?.x ?? 0));
+                const bodyHeight = Math.abs((landmarks[0]?.y ?? 0) - (((landmarks[27]?.y ?? 0) + (landmarks[28]?.y ?? 0)) / 2));
+                const framingBonus = bodyHeight > 0.32 && shoulderWidth > 0.08 && hipWidth > 0.06 ? 10 : 0;
+
+                const rawConfidence = Math.round((averageVisibility * 80) + ((visibleCorePoints / coreIndices.length) * 20) + framingBonus);
+                const confidence = Math.max(0, Math.min(100, rawConfidence));
+                const smoothedConfidence = state.lastTrackingConfidence
+                    ? Math.round((state.lastTrackingConfidence * 0.6) + (confidence * 0.4))
+                    : confidence;
+
+                if (smoothedConfidence >= 80) {
+                    app.updateTrackingUI(smoothedConfidence, 'Body tracked clearly. Hold the pose steadily.', 'good');
+                } else if (smoothedConfidence >= 55) {
+                    app.updateTrackingUI(smoothedConfidence, 'Tracking is partial. Keep your full body centered.', 'warn');
+                } else {
+                    app.updateTrackingUI(smoothedConfidence, 'Tracking is weak. Move back so head, hips, knees and feet stay visible.', 'error');
+                }
+
+                return smoothedConfidence;
+            },
+
+            analyzePosture: (landmarks, trackingConfidence = 0) => {
+                if(!landmarks) {
+                    state.currentScore = 0;
+                    document.getElementById('val-posture').innerText = '0%';
+                    document.getElementById('bar-posture').style.width = '0%';
+                    return 0;
+                }
+
+                const updatePostureUI = (score, message, cssClass) => {
+                    state.currentScore = score;
+                    document.getElementById('val-posture').innerText = score + "%";
+                    document.getElementById('bar-posture').style.width = score + "%";
+                    const feedback = document.getElementById('ai-feedback');
+                    feedback.innerText = message;
+                    feedback.className = cssClass;
+                };
+
+                if (trackingConfidence < 35) {
+                    const fallbackScore = Math.max(0, state.lastGoodPostureScore - 4);
+                    updatePostureUI(
+                        fallbackScore,
+                        "Tracking is too weak for posture analysis.",
+                        "text-xs text-center italic text-yellow-400"
+                    );
+                    return fallbackScore;
+                }
+
+                const getDistance = (a, b) => {
+                    const dx = a.x - b.x;
+                    const dy = a.y - b.y;
+                    return Math.sqrt((dx * dx) + (dy * dy));
+                };
+
+                const clampScore = (value) => Math.max(0, Math.min(100, value));
+
+                const getPoint = (index) => landmarks[index] || { x: 0, y: 0 };
+
+                const nose = getPoint(0);
                 const leftShoulder = landmarks[11];
                 const rightShoulder = landmarks[12];
-                const shoulderScore = Math.max(0, 100 - (Math.abs(leftShoulder.y - rightShoulder.y) * 400));
-                
-                const leftElbow = landmarks[13];
-                const rightElbow = landmarks[14];
-                const armSpread = Math.abs(leftElbow.x - rightElbow.x);
-                const armScore = armSpread > 0.3 ? 100 : 50;
+                const leftElbow = getPoint(13);
+                const rightElbow = getPoint(14);
+                const leftWrist = getPoint(15);
+                const rightWrist = getPoint(16);
+                const leftHip = landmarks[23];
+                const rightHip = landmarks[24];
+                const leftKnee = getPoint(25);
+                const rightKnee = getPoint(26);
+                const leftAnkle = getPoint(27);
+                const rightAnkle = getPoint(28);
 
-                const finalScore = Math.floor((spineScore * 0.4) + (shoulderScore * 0.4) + (armScore * 0.2));
-                state.currentScore = finalScore;
+                const hipCenter = {
+                    x: (leftHip.x + rightHip.x) / 2,
+                    y: (leftHip.y + rightHip.y) / 2
+                };
+
+                // Improved robust scaling for varied distances and camera angles
+                const shoulderWidth = Math.max(getDistance(leftShoulder, rightShoulder), 0.05);
+                const hipWidth = Math.max(getDistance(leftHip, rightHip), 0.05);
+                const torsoHeight = Math.max(getDistance(leftShoulder, leftHip), 0.1);
+                const referenceScale = (shoulderWidth + hipWidth + torsoHeight) / 3;
+
+                // Relative offsets using reference scale
+                const spineOffset = Math.abs(nose.x - hipCenter.x) / referenceScale;
+                const shoulderTilt = Math.abs(leftShoulder.y - rightShoulder.y) / referenceScale;
+                const hipTilt = Math.abs(leftHip.y - rightHip.y) / referenceScale;
+                const elbowTilt = Math.abs(leftElbow.y - rightElbow.y) / referenceScale;
+                const wristExtension = Math.abs(leftWrist.x - rightWrist.x) / shoulderWidth;
+                const kneeSpacing = Math.abs(leftKnee.y - rightKnee.y) / referenceScale;
+                const ankleSpread = Math.abs(leftAnkle.x - rightAnkle.x) / hipWidth;
+                const verticalStance = getDistance(nose, hipCenter) / torsoHeight;
+
+                // Scoring weights refined for classical dance (posture + symmetry)
+                const spineScore = clampScore(100 - (spineOffset * 60));
+                const balanceScore = clampScore(100 - ((shoulderTilt * 50) + (hipTilt * 40)));
+                const armExtensionScore = clampScore(Math.min(wristExtension * 40, 100)); // Prize open arms
+                const armSymmetryScore = clampScore(100 - (elbowTilt * 50));
+                const armScore = Math.round((armExtensionScore * 0.4) + (armSymmetryScore * 0.6));
                 
-                document.getElementById('val-posture').innerText = finalScore + "%";
-                document.getElementById('bar-posture').style.width = finalScore + "%";
-                
+                const stanceScore = clampScore(100 - (Math.abs(ankleSpread - 1.4) * 30));
+                const lowerBodyScore = Math.round((stanceScore * 0.6) + (clampScore(100 - (kneeSpacing * 40)) * 0.4));
+
+                state.latestPostureDetails = {
+                    spineScore: Math.round(spineScore),
+                    balanceScore: Math.round(balanceScore),
+                    armScore: Math.round(armScore),
+                    lowerBodyScore: Math.round(lowerBodyScore),
+                    trackingConfidence: Math.round(trackingConfidence)
+                };
+
+                const rawScore = Math.round((spineScore * 0.32) + (balanceScore * 0.28) + (armScore * 0.16) + (lowerBodyScore * 0.24));
+                const smoothedScore = state.lastGoodPostureScore
+                    ? Math.round((state.lastGoodPostureScore * 0.55) + (rawScore * 0.45))
+                    : rawScore;
+
+                state.lastGoodPostureScore = smoothedScore;
+
                 const feedback = document.getElementById('ai-feedback');
-                if(finalScore > 75) {
-                    feedback.innerText = "Excellent posture."; 
+                if(smoothedScore > 82) {
+                    feedback.innerText = "Excellent posture and alignment."; 
                     feedback.className = "text-xs text-center italic text-green-400";
+                } else if (smoothedScore > 65) {
+                    feedback.innerText = "Good posture. Fine-tune shoulders and spine.";
+                    feedback.className = "text-xs text-center italic text-yellow-300";
                 } else {
-                    feedback.innerText = "Adjust alignment."; 
+                    feedback.innerText = "Adjust alignment and keep arms balanced."; 
                     feedback.className = "text-xs text-center italic text-red-400";
                 }
+
+                state.currentScore = smoothedScore;
+                document.getElementById('val-posture').innerText = smoothedScore + "%";
+                document.getElementById('bar-posture').style.width = smoothedScore + "%";
                 
-                return finalScore;
+                return smoothedScore;
             },
             detectBhumiPranam: (results) => {
     if (!results.poseLandmarks || !results.leftHandLandmarks || !results.rightHandLandmarks) {
@@ -998,6 +1267,7 @@ if (
         btn.classList.add("scale-110", "ring-4", "ring-red-900");
 
         // Initialize recording
+        app.resetRecordingMetrics();
         state.recordedChunks = [];
         if (!video.srcObject) return alert("Camera not started!");
         
@@ -1044,22 +1314,30 @@ if (
                 modal.classList.remove('hidden');
                 
                 const duration = Math.round((new Date() - state.recordStartTime) / 1000);
+                const accuracySummary = app.buildAccuracySummary();
                 const payload = {
                     userId: 'user_123',
                     lectureId: state.lecture.id,
                     score: state.currentScore,
                     duration: duration,
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    danceId: state.dance?.id,
+                    lectureTitle: state.lecture?.title,
+                    accuracySummary
                 };
 
                 const apiResponse = await api.sendAnalysisData(payload);
+                const verifiedScore = apiResponse.data.accuracy || state.currentScore;
                 
                 await practiceSessionsDB.insertOne({
                     dance: state.dance.name,
                     lecture: state.lecture.title,
                     duration: `${Math.floor(duration/60)}m ${duration%60}s`,
-                    score: state.currentScore,
-                    status: apiResponse.data.verified ? "Verified ✅" : "Correction Needed ⚠️"
+                    score: verifiedScore,
+                    status: apiResponse.data.verified ? "Verified ✅" : "Correction Needed ⚠️",
+                    serverMessage: apiResponse.data.serverMessage,
+                    correctionPoints: apiResponse.data.correctionPoints,
+                    trackingConfidence: accuracySummary.averageTrackingConfidence
                 });
                 
                 state.history = await practiceSessionsDB.find();
@@ -1089,7 +1367,9 @@ if (
                                     <span>${new Date(s.timestamp).toLocaleDateString()}</span>
                                     <span>•</span>
                                     <span>${s.duration}</span>
+                                    ${s.trackingConfidence ? `<span>•</span><span>Tracking ${s.trackingConfidence}%</span>` : ''}
                                 </div>
+                                ${s.serverMessage ? `<p class="text-xs text-gray-500 mt-1">${s.serverMessage}</p>` : ''}
                             </div>
                         </div>
                         <div class="text-right">
