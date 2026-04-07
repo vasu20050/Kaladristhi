@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kaladrishti | The Divine Art of Dance</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,400&family=Montserrat:wght@200;400;500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,400&family=Montserrat:wght@200;400;500;700&display=swap"
+        rel="stylesheet">
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- MediaPipe Holistic Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js" crossorigin="anonymous"></script>
 
     <!-- App Configuration & Styles -->
@@ -27,12 +32,14 @@
         :root {
             /* Palette: "Temple at Dusk" */
             --color-bg-dark: #0f0c0b;
-            --color-primary: #eebc51; /* Luminous Gold */
+            --color-primary: #eebc51;
+            /* Luminous Gold */
             --color-primary-dim: #b88a2d;
-            --color-accent: #9e1b32; /* Sindoor Red */
+            --color-accent: #9e1b32;
+            /* Sindoor Red */
             --color-text-main: #f5f2eb;
             --color-text-muted: #9ca3af;
-            
+
             --glass-bg: rgba(20, 20, 20, 0.65);
             --glass-border: rgba(238, 188, 81, 0.15);
             --glass-shine: rgba(255, 255, 255, 0.03);
@@ -50,7 +57,13 @@
             padding: 0;
         }
 
-        h1, h2, h3, h4, .font-display { font-family: var(--font-display); }
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-display {
+            font-family: var(--font-display);
+        }
 
         /* Premium Glass Card */
         .glass-card {
@@ -77,17 +90,28 @@
             position: relative;
             z-index: 10;
         }
+
         .view-section.active {
             display: flex;
             flex-direction: column;
         }
 
-        .mirror-mode { transform: scaleX(-1); }
+        .mirror-mode {
+            transform: scaleX(-1);
+        }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fade-up {
             animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
@@ -98,6 +122,7 @@
             width: 64px;
             height: 64px;
         }
+
         .loader-ring:after {
             content: " ";
             display: block;
@@ -109,14 +134,33 @@
             border-color: var(--color-primary) transparent var(--color-primary) transparent;
             animation: ring 1.2s linear infinite;
         }
-        @keyframes ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
     </style>
 </head>
+
 <body>
 
     <!-- ============================================== -->
@@ -124,194 +168,198 @@
     <!-- ============================================== -->
     <div id="view-landing" class="view-section active items-center justify-center">
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1543165365-072114002636?q=80&w=2000&auto=format&fit=crop" class="w-full h-full object-cover opacity-40" alt="Classical Dance Mood">
-            <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-dark)] via-transparent to-black opacity-90"></div>
+            <img src="https://images.unsplash.com/photo-1543165365-072114002636?q=80&w=2000&auto=format&fit=crop"
+                class="w-full h-full object-cover opacity-40" alt="Classical Dance Mood">
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-dark)] via-transparent to-black opacity-90">
+            </div>
         </div>
         <div class="relative z-10 text-center p-8 animate-fade-up">
             <div class="mb-6 flex justify-center">
-                <div class="w-20 h-20 border border-[var(--color-primary)] rounded-full flex items-center justify-center">
+                <div
+                    class="w-20 h-20 border border-[var(--color-primary)] rounded-full flex items-center justify-center">
                     <i data-lucide="feather" class="w-10 h-10 text-[var(--color-primary)]"></i>
                 </div>
             </div>
             <h1 class="text-7xl md:text-9xl font-bold tracking-tighter text-gold-gradient mb-6">KALADRISHTI</h1>
-            <p class="text-lg md:text-2xl text-[var(--color-text-muted)] tracking-[0.3em] uppercase font-light border-t border-b border-white/10 py-4 inline-block">
+            <p
+                class="text-lg md:text-2xl text-[var(--color-text-muted)] tracking-[0.3em] uppercase font-light border-t border-b border-white/10 py-4 inline-block">
                 Preserving Heritage through Vision
             </p>
         </div>
     </div>
 
- <!-- ============================================== -->
-<!-- VIEW 2: ENTRY -->
-<!-- ============================================== -->
-<div id="view-entry" class="view-section relative items-end pb-20 px-8 md:px-24 overflow-hidden">
+    <!-- ============================================== -->
+    <!-- VIEW 2: ENTRY -->
+    <!-- ============================================== -->
+    <div id="view-entry" class="view-section relative items-end pb-20 px-8 md:px-24 overflow-hidden">
 
-    <!-- BACKGROUND VIDEO -->
-    <video 
-        autoplay 
-        muted 
-        loop 
-        playsinline
-        class="absolute inset-0 w-full h-full object-cover opacity-30 z-0"
-    >
-        <source src="media/vid/dancer-bg1.webm" type="video/webm">
-        Your browser does not support the video tag.
-    </video>
+        <!-- BACKGROUND VIDEO -->
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-30 z-0">
+            <source src="media/vid/dancer-bg1.webm" type="video/webm">
+            Your browser does not support the video tag.
+        </video>
 
-    <!-- Dark overlay -->
-    <div class="absolute inset-0 bg-[var(--color-bg-dark)]/80 z-0"></div>
+        <!-- Dark overlay -->
+        <div class="absolute inset-0 bg-[var(--color-bg-dark)]/80 z-0"></div>
 
-    <!-- CONTENT -->
-    <div class="relative z-10 max-w-2xl animate-fade-up">
-        <h2 class="text-5xl md:text-7xl font-display text-white mb-8 leading-tight">
-            Step into the <br>
-            <span class="text-[var(--color-primary)] italic">Sacred Circle.</span>
-        </h2>
+        <!-- CONTENT -->
+        <div class="relative z-10 max-w-2xl animate-fade-up">
+            <h2 class="text-5xl md:text-7xl font-display text-white mb-8 leading-tight">
+                Step into the <br>
+                <span class="text-[var(--color-primary)] italic">Sacred Circle.</span>
+            </h2>
 
-        <p class="text-[var(--color-text-muted)] mb-10 text-lg leading-relaxed max-w-md">
-            Experience Indian classical dance with AI-assisted posture correction and detailed expression analysis.
-        </p>
+            <p class="text-[var(--color-text-muted)] mb-10 text-lg leading-relaxed max-w-md">
+                Experience Indian classical dance with AI-assisted posture correction and detailed expression analysis.
+            </p>
 
-        <button 
-            onclick="router.navigate('selection')" 
-            class="group flex items-center gap-4 px-10 py-4 glass-card hover:bg-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all duration-500 rounded-full"
-        >
-            <span class="uppercase tracking-widest font-bold text-sm group-hover:text-black">
-                Begin Journey
-            </span>
-            <i data-lucide="arrow-right"
-               class="w-5 h-5 group-hover:text-black group-hover:translate-x-2 transition-transform"></i>
-        </button>
+            <button onclick="router.navigate('selection')"
+                class="group flex items-center gap-4 px-10 py-4 glass-card hover:bg-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all duration-500 rounded-full">
+                <span class="uppercase tracking-widest font-bold text-sm group-hover:text-black">
+                    Begin Journey
+                </span>
+                <i data-lucide="arrow-right"
+                    class="w-5 h-5 group-hover:text-black group-hover:translate-x-2 transition-transform"></i>
+            </button>
+        </div>
+
     </div>
 
-</div>
+    <!-- ============================================== -->
+    <!-- VIEW 3: SELECTION -->
+    <!-- ============================================== -->
+    <div id="view-selection" class="view-section relative overflow-hidden">
 
-<!-- ============================================== -->
-<!-- VIEW 3: SELECTION -->
-<!-- ============================================== -->
-<div id="view-selection" class="view-section relative overflow-hidden">
+        <!-- Background Video -->
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover z-0">
+            <source src="media/vid/dancer-bg1.webm" type="video/webm">
+        </video>
 
-    <!-- Background Video -->
-    <video
-        autoplay
-        muted
-        loop
-        playsinline
-        class="absolute inset-0 w-full h-full object-cover z-0">
-        <source src="media/vid/dancer-bg1.webm" type="video/webm">
-    </video>
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/30 z-0"></div>
 
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-black/30 z-0"></div>
+        <header
+            class="fixed top-0 w-full z-50 px-8 py-6 flex items-center justify-between glass-card !border-x-0 !border-t-0 !rounded-none">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="router.navigate('entry')">
+                <i data-lucide="feather" class="text-[var(--color-primary)]"></i>
+                <span class="font-display font-bold text-xl tracking-wide">KALADRISHTI</span>
+            </div>
+            <div class="text-sm uppercase tracking-widest text-[var(--color-text-muted)] hidden md:block">
+                Select Form
+            </div>
+        </header>
 
-    <header class="fixed top-0 w-full z-50 px-8 py-6 flex items-center justify-between glass-card !border-x-0 !border-t-0 !rounded-none">
-        <div class="flex items-center gap-2 cursor-pointer" onclick="router.navigate('entry')">
-            <i data-lucide="feather" class="text-[var(--color-primary)]"></i>
-            <span class="font-display font-bold text-xl tracking-wide">KALADRISHTI</span>
-        </div>
-        <div class="text-sm uppercase tracking-widest text-[var(--color-text-muted)] hidden md:block">
-            Select Form
-        </div>
-    </header>
+        <main class="relative z-10 pt-32 pb-12 px-8 md:px-12 w-full max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="dance-grid"></div>
+        </main>
 
-    <main class="relative z-10 pt-32 pb-12 px-8 md:px-12 w-full max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="dance-grid"></div>
-    </main>
-
-</div>
+    </div>
 
 
 
 
     <!-- ============================================== -->
-<!-- VIEW 4: DASHBOARD -->
-<!-- ============================================== -->
-<div id="view-dashboard" class="view-section relative h-screen w-full overflow-hidden bg-[var(--color-bg-dark)] hidden">
+    <!-- VIEW 4: DASHBOARD -->
+    <!-- ============================================== -->
+    <div id="view-dashboard"
+        class="view-section relative h-screen w-full overflow-hidden bg-[var(--color-bg-dark)] hidden">
 
-    <div class="absolute inset-0 z-0">
-        <img
-            id="dashboard-hero-img"
-            class="w-full h-full object-cover object-center transition-transform duration-1000 scale-105"
-            alt="Dance background">
-        <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-dark)] via-[var(--color-bg-dark)]/80 to-black/30"></div>
-    </div>
-
-    <div class="relative z-10 h-full w-full max-w-4xl mx-auto px-6 md:px-12 flex flex-col justify-end pb-12 md:pb-20">
-
-        <div class="mb-8">
-            <button onclick="router.navigate('selection')"
-                class="group flex items-center gap-2 text-sm text-white/70 hover:text-white mb-6 transition-colors backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full w-fit border border-white/10">
-                <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
-                Back to Selection
-            </button>
-
-            <h1 id="dashboard-title"
-                class="text-5xl md:text-7xl font-display text-white mb-2 tracking-tight drop-shadow-lg">
-                Loading...
-            </h1>
-
-            <div id="dashboard-meta" class="text-lg text-white/80 font-light flex items-center gap-2">
-                </div>
+        <div class="absolute inset-0 z-0">
+            <img id="dashboard-hero-img"
+                class="w-full h-full object-cover object-center transition-transform duration-1000 scale-105"
+                alt="Dance background">
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-[var(--color-bg-dark)] via-[var(--color-bg-dark)]/80 to-black/30">
+            </div>
         </div>
 
-        <div class="w-full">
-            <h3 class="text-xl font-display text-white mb-4 opacity-90">Curriculum</h3>
+        <div
+            class="relative z-10 h-full w-full max-w-4xl mx-auto px-6 md:px-12 flex flex-col justify-end pb-12 md:pb-20">
 
-            <div id="lecture-list" class="space-y-3 max-h-[45vh] overflow-y-auto pr-2 scrollbar-hide">
+            <div class="mb-8">
+                <button onclick="router.navigate('selection')"
+                    class="group flex items-center gap-2 text-sm text-white/70 hover:text-white mb-6 transition-colors backdrop-blur-sm bg-black/20 px-3 py-1 rounded-full w-fit border border-white/10">
+                    <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
+                    Back to Selection
+                </button>
+
+                <h1 id="dashboard-title"
+                    class="text-5xl md:text-7xl font-display text-white mb-2 tracking-tight drop-shadow-lg">
+                    Loading...
+                </h1>
+
+                <div id="dashboard-meta" class="text-lg text-white/80 font-light flex items-center gap-2">
                 </div>
+            </div>
+
+            <div class="w-full">
+                <h3 class="text-xl font-display text-white mb-4 opacity-90">Curriculum</h3>
+
+                <div id="lecture-list" class="space-y-3 max-h-[45vh] overflow-y-auto pr-2 scrollbar-hide">
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- ============================================== -->
     <!-- VIEW 5: LECTURE / PRACTICE / RESULTS -->
     <!-- ============================================== -->
     <div id="view-lecture" class="view-section bg-black">
-        <header id="lecture-header" class="fixed top-0 left-0 w-full z-50 px-6 py-4 flex items-center justify-between bg-gradient-to-b from-black/90 to-transparent pointer-events-none">
+        <header id="lecture-header"
+            class="fixed top-0 left-0 w-full z-50 px-6 py-4 flex items-center justify-between bg-gradient-to-b from-black/90 to-transparent pointer-events-none">
             <div class="pointer-events-auto flex items-center gap-4">
-                <button onclick="router.navigate('dashboard')" class="p-2 rounded-full glass-card hover:bg-white/10 transition">
+                <button onclick="router.navigate('dashboard')"
+                    class="p-2 rounded-full glass-card hover:bg-white/10 transition">
                     <i data-lucide="chevron-left" class="w-5 h-5 text-white"></i>
                 </button>
-                <span id="lecture-nav-title" class="text-sm font-bold tracking-widest text-gray-300 hidden md:inline">Lecture Title</span>
+                <span id="lecture-nav-title"
+                    class="text-sm font-bold tracking-widest text-gray-300 hidden md:inline">Lecture Title</span>
             </div>
             <div class="pointer-events-auto flex gap-2 glass-card p-1 rounded-full">
-                <button onclick="app.switchTab('tutorial')" id="tab-tutorial" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition bg-[var(--color-primary)] text-black">Learn</button>
-                <button onclick="app.switchTab('practice')" id="tab-practice" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition text-gray-400 hover:text-white">Practice</button>
-                <button onclick="app.switchTab('results')" id="tab-results" class="px-4 py-2 rounded-full text-xs font-bold uppercase transition text-gray-400 hover:text-white">Results</button>
+                <button onclick="app.switchTab('tutorial')" id="tab-tutorial"
+                    class="px-4 py-2 rounded-full text-xs font-bold uppercase transition bg-[var(--color-primary)] text-black">Learn</button>
+                <button onclick="app.switchTab('practice')" id="tab-practice"
+                    class="px-4 py-2 rounded-full text-xs font-bold uppercase transition text-gray-400 hover:text-white">Practice</button>
+                <button onclick="app.switchTab('results')" id="tab-results"
+                    class="px-4 py-2 rounded-full text-xs font-bold uppercase transition text-gray-400 hover:text-white">Results</button>
             </div>
         </header>
 
         <main id="lecture-main" class="relative w-full h-screen flex flex-col pt-20 pb-0 px-0 md:px-0">
-            
+
             <!-- TUTORIAL TAB -->
-            <div id="content-tutorial" class="tab-content w-full h-full p-4 md:p-8 flex flex-col md:flex-row gap-6 animate-fade-up max-w-7xl mx-auto">
-                <div class="flex-grow bg-zinc-900 rounded-2xl overflow-hidden relative group border border-white/10 shadow-2xl">
-                 <video
-    class="w-full h-full object-cover"
-    controls
-    autoplay
-    muted
->
-    <source src="media/vid/BH1.mp4" type="video/mp4">
-</video>
-   
+            <div id="content-tutorial"
+                class="tab-content w-full h-full p-4 md:p-8 flex flex-col md:flex-row gap-6 animate-fade-up max-w-7xl mx-auto">
+                <div
+                    class="flex-grow bg-zinc-900 rounded-2xl overflow-hidden relative group border border-white/10 shadow-2xl">
+                    <video class="w-full h-full object-cover" controls autoplay muted>
+                        <source src="media/vid/BH1.mp4" type="video/mp4">
+                    </video>
+
                 </div>
                 <div class="w-full md:w-80 flex-shrink-0 glass-card p-6 rounded-2xl h-fit">
-                    <h4 class="text-[var(--color-primary)] font-bold uppercase text-xs tracking-widest mb-4">Guru's Notes</h4>
+                    <h4 class="text-[var(--color-primary)] font-bold uppercase text-xs tracking-widest mb-4">Guru's
+                        Notes</h4>
                     <ul class="space-y-4 text-sm text-gray-400">
-                        <li class="flex gap-3"><i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i> Keep back straight.</li>
-                        <li class="flex gap-3"><i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i> Bend knees outward.</li>
+                        <li class="flex gap-3"><i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i>
+                            Keep back straight.</li>
+                        <li class="flex gap-3"><i data-lucide="info" class="w-5 h-5 text-[var(--color-primary)]"></i>
+                            Bend knees outward.</li>
                     </ul>
                 </div>
             </div>
 
             <!-- PRACTICE TAB -->
             <div id="content-practice" class="tab-content hidden w-full h-full relative bg-black">
-                <video id="webcam" class="absolute inset-0 w-full h-full object-contain mirror-mode" autoplay muted playsinline></video>
+                <video id="webcam" class="absolute inset-0 w-full h-full object-contain mirror-mode" autoplay muted
+                    playsinline></video>
                 <img id="static-image-source" class="absolute inset-0 w-full h-full object-contain hidden">
                 <canvas id="output_canvas" class="absolute inset-0 w-full h-full object-contain mirror-mode"></canvas>
-                
+
                 <!-- RIGHT SIDE: AI Panel (Fixed) -->
-                <div id="ai-panel" class="absolute top-20 right-8 w-72 glass-card p-5 rounded-xl z-20 transform translate-x-[150%] transition-transform duration-500">
+                <div id="ai-panel"
+                    class="absolute top-20 right-8 w-72 glass-card p-5 rounded-xl z-20 transform translate-x-[150%] transition-transform duration-500">
                     <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
                         <span class="text-[var(--color-primary)] font-display text-lg">Pose Tracking</span>
                         <div class="flex items-center gap-2">
@@ -319,7 +367,7 @@
                             <div id="status-indicator" class="w-2 h-2 rounded-full bg-gray-500"></div>
                         </div>
                     </div>
-                    
+
                     <div class="mb-4">
                         <div class="flex justify-between text-xs text-gray-400 mb-1">
                             <span>Posture</span>
@@ -329,84 +377,79 @@
                             <div id="bar-posture" class="h-full bg-green-500 w-0 transition-all duration-300"></div>
                         </div>
                     </div>
-                    
+
                     <div class="p-3 bg-white/5 rounded border border-white/5">
                         <p id="ai-feedback" class="text-xs text-center italic text-gray-300">"Initialize camera..."</p>
                     </div>
                 </div>
-              <!-- LEFT SIDE TUTORIAL VIDEO -->
-<div id="practice-tutorial-video" 
-     class="absolute top-20 left-8 w-72 bg-black rounded-xl overflow-hidden shadow-2xl z-30 cursor-move">
-<!-- Resize Controls -->
-<div class="absolute top-2 right-2 z-40 flex gap-1 bg-black/60 rounded-md p-1">
-    <button onclick="resizeTutorial('small')" class="px-2 text-white text-sm">−</button>
-    <button onclick="resizeTutorial('large')" class="px-2 text-white text-sm">+</button>
-</div>
+                <!-- LEFT SIDE TUTORIAL VIDEO -->
+                <div id="practice-tutorial-video"
+                    class="absolute top-20 left-8 w-72 bg-black rounded-xl overflow-hidden shadow-2xl z-30 cursor-move">
+                    <!-- Resize Controls -->
+                    <div class="absolute top-2 right-2 z-40 flex gap-1 bg-black/60 rounded-md p-1">
+                        <button onclick="resizeTutorial('small')" class="px-2 text-white text-sm">−</button>
+                        <button onclick="resizeTutorial('large')" class="px-2 text-white text-sm">+</button>
+                    </div>
 
-    <video
-        id="tutorialVideo"
-        class="w-full aspect-video bg-black"
-        controls
-        preload="metadata"
-    >
-        <source src="media/vid/BH1.mp4" type="video/mp4">
-        Your browser does not support video.
-    </video>
-</div>
+                    <video id="tutorialVideo" class="w-full aspect-video bg-black" controls preload="metadata">
+                        <source src="media/vid/BH1.mp4" type="video/mp4">
+                        Your browser does not support video.
+                    </video>
+                </div>
 
 
 
-<script>
-const videoBox = document.getElementById('practice-tutorial-video');
-const video = document.getElementById('tutorialVideo');
+                <script>
+                    const videoBox = document.getElementById('practice-tutorial-video');
+                    const video = document.getElementById('tutorialVideo');
 
-let isDragging = false;
-let startX, startY, initialLeft, initialTop;
+                    let isDragging = false;
+                    let startX, startY, initialLeft, initialTop;
 
-// Drag ONLY when clicking outside video controls
-videoBox.addEventListener('mousedown', (e) => {
-    if (e.target === video) return; // allow seeking
+                    // Drag ONLY when clicking outside video controls
+                    videoBox.addEventListener('mousedown', (e) => {
+                        if (e.target === video) return; // allow seeking
 
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
+                        isDragging = true;
+                        startX = e.clientX;
+                        startY = e.clientY;
 
-    const rect = videoBox.getBoundingClientRect();
-    initialLeft = rect.left;
-    initialTop = rect.top;
-});
+                        const rect = videoBox.getBoundingClientRect();
+                        initialLeft = rect.left;
+                        initialTop = rect.top;
+                    });
 
-document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDragging) return;
 
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
+                        const dx = e.clientX - startX;
+                        const dy = e.clientY - startY;
 
-    videoBox.style.left = initialLeft + dx + "px";
-    videoBox.style.top = initialTop + dy + "px";
-});
+                        videoBox.style.left = initialLeft + dx + "px";
+                        videoBox.style.top = initialTop + dy + "px";
+                    });
 
-document.addEventListener('mouseup', () => {
-    isDragging = false;
-});
-</script>
-<script>
-let tutorialSize = 1; // 1 = normal
+                    document.addEventListener('mouseup', () => {
+                        isDragging = false;
+                    });
+                </script>
+                <script>
+                    let tutorialSize = 1; // 1 = normal
 
-function resizeTutorial(action) {
-    const box = document.getElementById('practice-tutorial-video');
+                    function resizeTutorial(action) {
+                        const box = document.getElementById('practice-tutorial-video');
 
-    if (action === 'large' && tutorialSize < 1.8) {
-        tutorialSize += 0.2;
-    }
+                        if (action === 'large' && tutorialSize < 1.8) {
+                            tutorialSize += 0.2;
+                        }
 
-    if (action === 'small' && tutorialSize > 0.6) {
-        tutorialSize -= 0.2;
-    }
+                        if (action === 'small' && tutorialSize > 0.6) {
+                            tutorialSize -= 0.2;
+                        }
 
-    box.style.transform = `scale(${tutorialSize})`;
-}
-</script>
+                        box.style.transform = `scale(${tutorialSize})`;
+                    }
+                </script>
 
 
 
@@ -414,46 +457,59 @@ function resizeTutorial(action) {
 
 
                 <!-- CONTROLS: Bottom Right Stack -->
-                <div id="cam-controls" class="absolute bottom-10 right-10 flex flex-col items-center gap-4 z-50 opacity-0 transition pointer-events-none">
-                     <!-- Landmark Toggle Button -->
-                     <button id="btn-toggle-landmarks" onclick="app.toggleLandmarks()" class="pointer-events-auto p-3 rounded-full bg-gray-800/80 hover:bg-gray-700 text-white mb-2 transition backdrop-blur-sm border border-white/20 shadow-lg" title="Show/Hide Landmarks">
+                <div id="cam-controls"
+                    class="absolute bottom-10 right-10 flex flex-col items-center gap-4 z-50 opacity-0 transition pointer-events-none">
+                    <!-- Landmark Toggle Button -->
+                    <button id="btn-toggle-landmarks" onclick="app.toggleLandmarks()"
+                        class="pointer-events-auto p-3 rounded-full bg-gray-800/80 hover:bg-gray-700 text-white mb-2 transition backdrop-blur-sm border border-white/20 shadow-lg"
+                        title="Show/Hide Landmarks">
                         <i data-lucide="eye" class="w-6 h-6"></i>
-                     </button>
+                    </button>
 
-                     <!-- Record Button -->
-                     <button id="btn-record" onclick="app.toggleRecording()" class="pointer-events-auto w-16 h-16 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center shadow-lg shadow-black/50 transition transform hover:scale-110 border-4 border-white/20">
-                         <div class="w-6 h-6 bg-white rounded-sm"></div>
+                    <!-- Record Button -->
+                    <button id="btn-record" onclick="app.toggleRecording()"
+                        class="pointer-events-auto w-16 h-16 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center shadow-lg shadow-black/50 transition transform hover:scale-110 border-4 border-white/20">
+                        <div class="w-6 h-6 bg-white rounded-sm"></div>
                     </button>
                     <span class="text-xs text-white uppercase tracking-widest font-bold drop-shadow-md">Record</span>
                 </div>
 
                 <div id="camera-placeholder" class="absolute inset-0 flex items-center justify-center bg-black/90 z-30">
                     <div class="text-center p-6">
-                        <div class="w-20 h-20 bg-[var(--color-primary)]/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                        <div
+                            class="w-20 h-20 bg-[var(--color-primary)]/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
                             <i data-lucide="camera" class="w-8 h-8 text-[var(--color-primary)]"></i>
                         </div>
                         <h3 class="text-2xl font-display text-white mb-2">Sanctum of Practice</h3>
-                        <p class="text-gray-400 mb-6 max-w-sm mx-auto">AI will track your pose. Blue lines indicate correct alignment, Red lines indicate errors.</p>
+                        <p class="text-gray-400 mb-6 max-w-sm mx-auto">AI will track your pose. Blue lines indicate
+                            correct alignment, Red lines indicate errors.</p>
                         <div class="flex flex-col md:flex-row gap-4 justify-center">
-                            <button onclick="app.startCamera()" class="px-8 py-3 bg-[var(--color-primary)] text-black font-bold rounded-full hover:scale-105 transition shadow-[0_0_20px_rgba(238,188,81,0.3)]">
+                            <button onclick="app.startCamera()"
+                                class="px-8 py-3 bg-[var(--color-primary)] text-black font-bold rounded-full hover:scale-105 transition shadow-[0_0_20px_rgba(238,188,81,0.3)]">
                                 Start Live Camera
                             </button>
-                            <label class="px-8 py-3 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition cursor-pointer flex items-center gap-2">
+                            <label
+                                class="px-8 py-3 border border-white/20 text-white font-bold rounded-full hover:bg-white/10 transition cursor-pointer flex items-center gap-2">
                                 <i data-lucide="upload" class="w-4 h-4"></i> Upload Image
-                                <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="app.handleImageUpload(event)">
+                                <input type="file" id="image-upload" accept="image/*" class="hidden"
+                                    onchange="app.handleImageUpload(event)">
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <div id="ai-loading" class="absolute inset-0 bg-black/50 z-40 hidden flex-col items-center justify-center pointer-events-none">
+                <div id="ai-loading"
+                    class="absolute inset-0 bg-black/50 z-40 hidden flex-col items-center justify-center pointer-events-none">
                     <div class="loader-ring"></div>
-                    <p class="mt-4 text-[var(--color-primary)] uppercase tracking-widest text-xs font-bold drop-shadow-md">Initializing AI...</p>
+                    <p
+                        class="mt-4 text-[var(--color-primary)] uppercase tracking-widest text-xs font-bold drop-shadow-md">
+                        Initializing AI...</p>
                 </div>
             </div>
 
             <!-- RESULTS TAB -->
-            <div id="content-results" class="tab-content hidden w-full h-full p-4 md:p-12 max-w-7xl mx-auto overflow-y-auto">
+            <div id="content-results"
+                class="tab-content hidden w-full h-full p-4 md:p-12 max-w-7xl mx-auto overflow-y-auto">
                 <div class="flex items-end justify-between mb-8 border-b border-white/10 pb-4">
                     <div>
                         <h2 class="text-4xl font-display text-white">Performance Report</h2>
@@ -467,7 +523,8 @@ function resizeTutorial(action) {
 
                 <div id="results-list" class="grid gap-4">
                     <!-- Results injected here -->
-                    <div class="text-center py-12 text-gray-500 italic">No recordings found. Complete a practice session to see results.</div>
+                    <div class="text-center py-12 text-gray-500 italic">No recordings found. Complete a practice session
+                        to see results.</div>
                 </div>
             </div>
         </main>
@@ -579,42 +636,42 @@ function resizeTutorial(action) {
         ];
 
         const state = {
-    view: 'landing',
-    dance: null,
-    lecture: null,
-    recording: false,
-    holistic: null,
-    camera: null,
-    mode: 'camera',
-    history: [],
-    currentScore: 0,
-    loopId: null,
-    showLandmarks: true,
-    holisticReady: false,
-    holisticWarmupPromise: null,
-    processingFrame: false,
-    cameraStream: null,
-    lastGoodPostureScore: 0,
-    lastTrackingConfidence: 0,
-    latestPostureDetails: null,
-    recordingMetrics: {
-        scores: [],
-        tracking: [],
-        postureDetails: []
-    },
+            view: 'landing',
+            dance: null,
+            lecture: null,
+            recording: false,
+            holistic: null,
+            camera: null,
+            mode: 'camera',
+            history: [],
+            currentScore: 0,
+            loopId: null,
+            showLandmarks: true,
+            holisticReady: false,
+            holisticWarmupPromise: null,
+            processingFrame: false,
+            cameraStream: null,
+            lastGoodPostureScore: 0,
+            lastTrackingConfidence: 0,
+            latestPostureDetails: null,
+            recordingMetrics: {
+                scores: [],
+                tracking: [],
+                postureDetails: []
+            },
 
-    // 👇 ADD THESE (NEW)
-    poseHoldStart: null,
-    poseConfirmed: false,
-    autoAdvanced: false
-};
+            // 👇 ADD THESE (NEW)
+            poseHoldStart: null,
+            poseConfirmed: false,
+            autoAdvanced: false
+        };
 
 
         const router = {
             navigate: (viewId) => {
                 document.querySelectorAll('.view-section').forEach(el => {
                     el.classList.remove('active');
-                    if(el.classList.contains('animate-fade-up')) {
+                    if (el.classList.contains('animate-fade-up')) {
                         el.classList.remove('animate-fade-up');
                         void el.offsetWidth;
                         el.classList.add('animate-fade-up');
@@ -622,12 +679,12 @@ function resizeTutorial(action) {
                 });
                 document.getElementById(`view-${viewId}`).classList.add('active');
                 state.view = viewId;
-                if(viewId !== 'lecture') app.stopCamera();
-                if(viewId === 'dashboard') {
+                if (viewId !== 'lecture') app.stopCamera();
+                if (viewId === 'dashboard') {
                     // Reset tab when entering new dashboard
-                    app.switchTab('tutorial'); 
+                    app.switchTab('tutorial');
                 }
-                window.scrollTo(0,0);
+                window.scrollTo(0, 0);
             }
         };
 
@@ -665,7 +722,7 @@ function resizeTutorial(action) {
                 document.getElementById('dashboard-hero-img').src = state.dance.img;
                 document.getElementById('lecture-list').innerHTML = LECTURES.map((l, i) => `
                     <div onclick="app.selectLecture(${l.id})" class="glass-card p-6 rounded-sm flex items-center gap-6 cursor-pointer hover:bg-white/5 transition group border-l-4 border-transparent hover:border-l-[var(--color-primary)]">
-                        <div class="text-4xl font-display text-gray-600 group-hover:text-[var(--color-primary)] transition">0${i+1}</div>
+                        <div class="text-4xl font-display text-gray-600 group-hover:text-[var(--color-primary)] transition">0${i + 1}</div>
                         <div class="flex-grow">
                             <h4 class="text-lg font-bold text-white group-hover:text-[var(--color-primary)] transition">${l.title}</h4>
                             <p class="text-sm text-gray-400">${l.desc}</p>
@@ -686,10 +743,10 @@ function resizeTutorial(action) {
             switchTab: (tab) => {
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                 document.getElementById(`content-${tab}`).classList.remove('hidden');
-                
+
                 ['tutorial', 'practice', 'results'].forEach(t => {
                     const btn = document.getElementById(`tab-${t}`);
-                    if(t === tab) {
+                    if (t === tab) {
                         btn.classList.add('bg-[var(--color-primary)]', 'text-black');
                         btn.classList.remove('text-gray-400');
                     } else {
@@ -698,16 +755,16 @@ function resizeTutorial(action) {
                     }
                 });
 
-                if(tab === 'practice') { /* Camera handled by button */ } 
+                if (tab === 'practice') { /* Camera handled by button */ }
                 else { app.stopCamera(); }
-                
-                if(tab === 'results') app.renderResults();
+
+                if (tab === 'results') app.renderResults();
             },
 
             toggleLandmarks: () => {
                 state.showLandmarks = !state.showLandmarks;
                 const btn = document.getElementById('btn-toggle-landmarks');
-                if(state.showLandmarks) {
+                if (state.showLandmarks) {
                     btn.classList.remove('bg-red-500/80');
                     btn.classList.add('bg-gray-800/80');
                     btn.innerHTML = `<i data-lucide="eye" class="w-6 h-6"></i>`;
@@ -720,11 +777,11 @@ function resizeTutorial(action) {
             },
 
             initHolistic: () => {
-                const holistic = new Holistic({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`});
+                const holistic = new Holistic({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}` });
                 holistic.setOptions({
                     modelComplexity: 2, // Upgraded for much higher accuracy in complex dance poses
                     smoothLandmarks: true,
-                    enableSegmentation: false, 
+                    enableSegmentation: false,
                     smoothSegmentation: false,
                     refineFaceLandmarks: false,
                     minDetectionConfidence: 0.7, // Slightly higher for better initial lock
@@ -771,7 +828,7 @@ function resizeTutorial(action) {
 
                 placeholder.style.display = 'none';
                 loader.style.display = 'flex';
-                
+
                 try {
                     if (!state.cameraStream || !state.cameraStream.getVideoTracks().some(track => track.readyState === 'live')) {
                         state.cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -788,17 +845,17 @@ function resizeTutorial(action) {
                     video.srcObject = state.cameraStream;
                     await video.play();
                     loader.style.display = 'none';
-                    
+
                     // Warmup in background so first tracked frame appears faster.
                     app.warmupHolistic();
 
-                    if(!state.holistic) state.holistic = app.initHolistic();
-                    
+                    if (!state.holistic) state.holistic = app.initHolistic();
+
                     // Controlled loop: avoid overlapping sends + keep stable FPS.
                     const targetFrameInterval = 1000 / 24;
                     let lastSentAt = 0;
                     const sendFrame = async (timestamp) => {
-                        if(state.mode === 'camera' && !video.paused && !video.ended) {
+                        if (state.mode === 'camera' && !video.paused && !video.ended) {
                             if ((timestamp - lastSentAt) < targetFrameInterval || state.processingFrame) {
                                 state.loopId = requestAnimationFrame(sendFrame);
                                 return;
@@ -807,7 +864,7 @@ function resizeTutorial(action) {
                             lastSentAt = timestamp;
                             state.processingFrame = true;
                             try {
-                                await state.holistic.send({image: video});
+                                await state.holistic.send({ image: video });
                             } finally {
                                 state.processingFrame = false;
                             }
@@ -834,8 +891,8 @@ function resizeTutorial(action) {
                 document.getElementById('camera-placeholder').style.display = 'none';
                 document.getElementById('ai-loading').style.display = 'flex';
                 imgElement.onload = async () => {
-                    if(!state.holistic) state.holistic = app.initHolistic();
-                    await state.holistic.send({image: imgElement});
+                    if (!state.holistic) state.holistic = app.initHolistic();
+                    await state.holistic.send({ image: imgElement });
                     document.getElementById('ai-loading').style.display = 'none';
                     document.getElementById('ai-panel').classList.remove('translate-x-[150%]');
                 };
@@ -849,72 +906,85 @@ function resizeTutorial(action) {
                 canvas.width = results.image.width;
                 canvas.height = results.image.height;
                 state.mode === 'image' ? canvas.classList.remove('mirror-mode') : canvas.classList.add('mirror-mode');
-                
+
                 ctx.save();
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                if(state.mode === 'image') ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
-                
+                if (state.mode === 'image') ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+
                 const trackingConfidence = app.measureTrackingConfidence(results.poseLandmarks);
                 const analysis = app.analyzePosture(results.poseLandmarks, trackingConfidence); 
                 app.captureAccuracySample(analysis, trackingConfidence);
                 
-                // Color mapping: Blue (Good), Amber (Partial/Focus), Red (Poor/Hidden)
-                let feedbackColor = '#ff3b30'; // Red default
-                if (analysis >= 75 && trackingConfidence >= 65) {
-                    feedbackColor = '#14b8ff'; // Professional Blue
-                } else if (analysis >= 50 && trackingConfidence >= 45) {
-                    feedbackColor = '#ffcc00'; // Amber/Warning
+                // CRITICAL FIX: Increased threshold to 84% and added strict confidence requirement.
+                // Professional dance requires high precision; sitting in front of a camera is no longer "Correct".
+                const isCorrect = (analysis >= 84 && trackingConfidence >= 75);
+                let feedbackColor = isCorrect ? '#00e5ff' : '#ff3b30'; 
+                const skeletonGlow = isCorrect ? 'rgba(0, 229, 255, 0.45)' : 'rgba(255, 59, 48, 0.45)';
+
+                // Draw a bounding box frame if tracking exists (interpreting "framemark" request)
+                if (results.poseLandmarks) {
+                    const lms = results.poseLandmarks;
+                    const xs = lms.map(p => p.x);
+                    const ys = lms.map(p => p.y);
+                    const minX = Math.min(...xs); const maxX = Math.max(...xs);
+                    const minY = Math.min(...ys); const maxY = Math.max(...ys);
+                    
+                    ctx.save();
+                    ctx.strokeStyle = feedbackColor;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([8, 8]);
+                    ctx.strokeRect(
+                        (minX * canvas.width) - 30, 
+                        (minY * canvas.height) - 50, 
+                        ((maxX - minX) * canvas.width) + 60, 
+                        ((maxY - minY) * canvas.height) + 100
+                    );
+                    ctx.restore();
                 }
 
-if (
-    state.dance?.id === 'bharatanatyam' &&
-    state.lecture?.id === 1 &&
-    state.poseConfirmed
-) {
-    feedbackColor = '#00ff88'; // GREEN
-}
- 
-                
-                // CONDITIONAL DRAWING BASED ON TOGGLE
-                if (state.showLandmarks) {
-                    if (results.poseLandmarks) {
-                        app.drawBodyTracking(ctx, results.poseLandmarks, feedbackColor, trackingConfidence);
-                    }
+                if (state.showLandmarks && results.poseLandmarks) {
+                    ctx.save();
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = skeletonGlow;
+                    app.drawBodyTracking(ctx, results.poseLandmarks, feedbackColor, trackingConfidence);
+                    ctx.restore();
                 }
-                
+
                 ctx.restore();
                 // --- BHUMI PRANAM LOGIC (ONLY Lecture 1) ---
-if (
-    state.dance?.id === 'bharatanatyam' &&
-    state.lecture?.id === 1
-) {
-    const bhumi = app.detectBhumiPranam(results);
-    const feedback = document.getElementById('ai-feedback');
+                if (
+                    state.dance?.id === 'bharatanatyam' &&
+                    state.lecture?.id === 1
+                ) {
+                    const bhumi = app.detectBhumiPranam(results);
+                    const feedback = document.getElementById('ai-feedback');
 
-    if (bhumi.done) {
-        feedback.innerText = bhumi.step;
-        feedback.className = "text-xs text-center italic text-green-400";
+                    if (bhumi.done) {
+                        feedback.innerText = bhumi.step;
+                        feedback.className = "text-xs text-center italic text-green-400";
 
-        // GREEN skeleton when correct
-        state.currentScore = 100;
+                        // GREEN skeleton when correct
+                        state.currentScore = 100;
 
-        // Auto next lecture
-        if (!state.autoAdvanced) {
-            state.autoAdvanced = true;
-            setTimeout(() => app.selectLecture(2), 1500);
-        }
-    } else {
-        feedback.innerText = bhumi.step;
-        feedback.className = "text-xs text-center italic text-yellow-400";
-    }
-}
+                        // Auto next lecture
+                        if (!state.autoAdvanced) {
+                            state.autoAdvanced = true;
+                            setTimeout(() => app.selectLecture(2), 1500);
+                        }
+                    } else {
+                        feedback.innerText = bhumi.step;
+                        feedback.className = "text-xs text-center italic text-yellow-400";
+                    }
+                }
 
-                
+
                 const statusInd = document.getElementById('status-indicator');
                 statusInd.classList.remove('bg-gray-500', 'bg-red-500', 'bg-green-500', 'bg-yellow-500');
-                if (analysis >= 75 && trackingConfidence >= 65) statusInd.classList.add('bg-green-500');
-                else if (trackingConfidence >= 45) statusInd.classList.add('bg-yellow-500');
-                else statusInd.classList.add('bg-red-500');
+                if (isCorrect) {
+                  statusInd.classList.add('bg-green-500'); // Green for visual confirmation
+                } else {
+                  statusInd.classList.add('bg-red-500');
+                }
 
                 document.getElementById('ai-panel').classList.remove('translate-x-[150%]');
                 document.getElementById('cam-controls').style.opacity = '1';
@@ -922,7 +992,7 @@ if (
             },
 
             stopCamera: () => {
-                if(state.loopId) cancelAnimationFrame(state.loopId);
+                if (state.loopId) cancelAnimationFrame(state.loopId);
                 state.loopId = null;
                 state.processingFrame = false;
                 const video = document.getElementById('webcam');
@@ -931,15 +1001,15 @@ if (
                     video.srcObject = null;
                 }
                 state.cameraStream = null;
-                
+
                 document.getElementById('camera-placeholder').style.display = 'flex';
                 document.getElementById('ai-panel').classList.add('translate-x-[150%]');
                 document.getElementById('cam-controls').style.opacity = '0';
                 document.getElementById('static-image-source').classList.add('hidden');
-                
+
                 const cvs = document.getElementById('output_canvas');
                 const ctx = cvs.getContext('2d');
-                ctx.clearRect(0,0,cvs.width,cvs.height);
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
 
                 state.lastGoodPostureScore = 0;
                 state.lastTrackingConfidence = 0;
@@ -1083,7 +1153,7 @@ if (
             },
 
             analyzePosture: (landmarks, trackingConfidence = 0) => {
-                if(!landmarks) {
+                if (!landmarks) {
                     state.currentScore = 0;
                     document.getElementById('val-posture').innerText = '0%';
                     document.getElementById('bar-posture').style.width = '0%';
@@ -1099,12 +1169,12 @@ if (
                     feedback.className = cssClass;
                 };
 
-                if (trackingConfidence < 35) {
-                    const fallbackScore = Math.max(0, state.lastGoodPostureScore - 4);
+                if (trackingConfidence < 55) {
+                    const fallbackScore = Math.max(0, state.lastGoodPostureScore - 6);
                     updatePostureUI(
                         fallbackScore,
-                        "Tracking is too weak for posture analysis.",
-                        "text-xs text-center italic text-yellow-400"
+                        "Tracking too weak. Step back for full body visibility.",
+                        "text-xs text-center italic text-red-500"
                     );
                     return fallbackScore;
                 }
@@ -1160,9 +1230,10 @@ if (
                 const armExtensionScore = clampScore(Math.min(wristExtension * 40, 100)); // Prize open arms
                 const armSymmetryScore = clampScore(100 - (elbowTilt * 50));
                 const armScore = Math.round((armExtensionScore * 0.4) + (armSymmetryScore * 0.6));
-                
-                const stanceScore = clampScore(100 - (Math.abs(ankleSpread - 1.4) * 30));
-                const lowerBodyScore = Math.round((stanceScore * 0.6) + (clampScore(100 - (kneeSpacing * 40)) * 0.4));
+
+                // Visibility Weighting: Penalize scores heavily if crucial dance joints are missing
+                const joints = [leftShoulder, rightShoulder, leftHip, rightHip, leftKnee, rightKnee, leftAnkle, rightAnkle];
+                const visibilityPenalty = joints.reduce((penalty, j) => penalty + (app.getVisibilityScore(j) < 0.5 ? 12 : 0), 0);
 
                 state.latestPostureDetails = {
                     spineScore: Math.round(spineScore),
@@ -1172,7 +1243,7 @@ if (
                     trackingConfidence: Math.round(trackingConfidence)
                 };
 
-                const rawScore = Math.round((spineScore * 0.32) + (balanceScore * 0.28) + (armScore * 0.16) + (lowerBodyScore * 0.24));
+                const rawScore = clampScore(Math.round((spineScore * 0.32) + (balanceScore * 0.28) + (armScore * 0.16) + (lowerBodyScore * 0.24)) - visibilityPenalty);
                 const smoothedScore = state.lastGoodPostureScore
                     ? Math.round((state.lastGoodPostureScore * 0.55) + (rawScore * 0.45))
                     : rawScore;
@@ -1180,139 +1251,148 @@ if (
                 state.lastGoodPostureScore = smoothedScore;
 
                 const feedback = document.getElementById('ai-feedback');
-                if(smoothedScore > 82) {
-                    feedback.innerText = "Excellent posture and alignment."; 
+                if (smoothedScore > 82) {
+                    feedback.innerText = "Excellent posture and alignment.";
                     feedback.className = "text-xs text-center italic text-green-400";
                 } else if (smoothedScore > 65) {
                     feedback.innerText = "Good posture. Fine-tune shoulders and spine.";
                     feedback.className = "text-xs text-center italic text-yellow-300";
                 } else {
-                    feedback.innerText = "Adjust alignment and keep arms balanced."; 
+                    feedback.innerText = "Adjust alignment and keep arms balanced.";
                     feedback.className = "text-xs text-center italic text-red-400";
                 }
 
                 state.currentScore = smoothedScore;
                 document.getElementById('val-posture').innerText = smoothedScore + "%";
-                document.getElementById('bar-posture').style.width = smoothedScore + "%";
+                const bar = document.getElementById('bar-posture');
+                bar.style.width = smoothedScore + "%";
                 
+                // Binary Red/Blue logic for the UI bar to match the skeleton
+                bar.classList.remove('bg-green-500', 'bg-red-500', 'bg-yellow-500', 'bg-blue-400');
+                if (smoothedScore >= 84) {
+                    bar.classList.add('bg-blue-400');
+                } else {
+                    bar.classList.add('bg-red-500');
+                }
+
                 return smoothedScore;
             },
             detectBhumiPranam: (results) => {
-    if (!results.poseLandmarks || !results.leftHandLandmarks || !results.rightHandLandmarks) {
-        return { done: false, step: "Pose not visible" };
-    }
+                if (!results.poseLandmarks || !results.leftHandLandmarks || !results.rightHandLandmarks) {
+                    return { done: false, step: "Pose not visible" };
+                }
 
-    const pose = results.poseLandmarks;
-    const leftHand = results.leftHandLandmarks;
-    const rightHand = results.rightHandLandmarks;
+                const pose = results.poseLandmarks;
+                const leftHand = results.leftHandLandmarks;
+                const rightHand = results.rightHandLandmarks;
 
-    const nose = pose[0];
-    const leftShoulder = pose[11];
-    const rightShoulder = pose[12];
-    const leftHip = pose[23];
-    const rightHip = pose[24];
-    const leftAnkle = pose[27];
-    const rightAnkle = pose[28];
+                const nose = pose[0];
+                const leftShoulder = pose[11];
+                const rightShoulder = pose[12];
+                const leftHip = pose[23];
+                const rightHip = pose[24];
+                const leftAnkle = pose[27];
+                const rightAnkle = pose[28];
 
-    const leftPalm = leftHand[0];
-    const rightPalm = rightHand[0];
+                const leftPalm = leftHand[0];
+                const rightPalm = rightHand[0];
 
-    // Step 1: Anjali Hasta
-    const palmDistance = Math.abs(leftPalm.x - rightPalm.x);
-    const chestY = (leftShoulder.y + rightShoulder.y) / 2;
-    const palmsAtChest =
-        palmDistance < 0.05 &&
-        Math.abs(leftPalm.y - chestY) < 0.08;
+                // Step 1: Anjali Hasta
+                const palmDistance = Math.abs(leftPalm.x - rightPalm.x);
+                const chestY = (leftShoulder.y + rightShoulder.y) / 2;
+                const palmsAtChest =
+                    palmDistance < 0.05 &&
+                    Math.abs(leftPalm.y - chestY) < 0.08;
 
-    // Step 2: Bow
-    const hipCenterY = (leftHip.y + rightHip.y) / 2;
-    const torsoBent =
-        nose.y > chestY + 0.05 &&
-        nose.y < hipCenterY;
+                // Step 2: Bow
+                const hipCenterY = (leftHip.y + rightHip.y) / 2;
+                const torsoBent =
+                    nose.y > chestY + 0.05 &&
+                    nose.y < hipCenterY;
 
-    // Step 3: Earth touch
-    const ankleY = (leftAnkle.y + rightAnkle.y) / 2;
-    const handsNearFeet =
-        leftPalm.y > ankleY - 0.08 &&
-        rightPalm.y > ankleY - 0.08;
+                // Step 3: Earth touch
+                const ankleY = (leftAnkle.y + rightAnkle.y) / 2;
+                const handsNearFeet =
+                    leftPalm.y > ankleY - 0.08 &&
+                    rightPalm.y > ankleY - 0.08;
 
-    const now = Date.now();
+                const now = Date.now();
 
-    if (palmsAtChest && torsoBent && handsNearFeet) {
-        if (!state.poseHoldStart) state.poseHoldStart = now;
+                if (palmsAtChest && torsoBent && handsNearFeet) {
+                    if (!state.poseHoldStart) state.poseHoldStart = now;
 
-        const holdTime = (now - state.poseHoldStart) / 1000;
-        if (holdTime >= 2) {
-            state.poseConfirmed = true;
-            return { done: true, step: "Bhumi Pranam Completed 🙏" };
-        }
-        return { done: false, step: `Hold for ${(2 - holdTime).toFixed(1)}s` };
-    }
+                    const holdTime = (now - state.poseHoldStart) / 1000;
+                    if (holdTime >= 2) {
+                        state.poseConfirmed = true;
+                        return { done: true, step: "Bhumi Pranam Completed 🙏" };
+                    }
+                    return { done: false, step: `Hold for ${(2 - holdTime).toFixed(1)}s` };
+                }
 
-    state.poseHoldStart = null;
-    state.poseConfirmed = false;
-    return { done: false, step: "Perform Bhumi Pranam steps" };
-},
+                state.poseHoldStart = null;
+                state.poseConfirmed = false;
+                return { done: false, step: "Perform Bhumi Pranam steps" };
+            },
 
 
             toggleRecording: () => {
-    const btn = document.getElementById('btn-record');
-    const inner = btn.querySelector('div');
-    const video = document.getElementById('webcam');
+                const btn = document.getElementById('btn-record');
+                const inner = btn.querySelector('div');
+                const video = document.getElementById('webcam');
 
-    state.recording = !state.recording;
+                state.recording = !state.recording;
 
-    if (state.recording) {
-        inner.className = "w-6 h-6 bg-white rounded-sm animate-pulse";
-        btn.classList.add("scale-110", "ring-4", "ring-red-900");
+                if (state.recording) {
+                    inner.className = "w-6 h-6 bg-white rounded-sm animate-pulse";
+                    btn.classList.add("scale-110", "ring-4", "ring-red-900");
 
-        // Initialize recording
-        app.resetRecordingMetrics();
-        state.recordedChunks = [];
-        if (!video.srcObject) return alert("Camera not started!");
-        
-        state.mediaRecorder = new MediaRecorder(video.srcObject, { mimeType: "video/webm" });
+                    // Initialize recording
+                    app.resetRecordingMetrics();
+                    state.recordedChunks = [];
+                    if (!video.srcObject) return alert("Camera not started!");
 
-        state.mediaRecorder.ondataavailable = (e) => {
-            if (e.data.size > 0) state.recordedChunks.push(e.data);
-        };
+                    state.mediaRecorder = new MediaRecorder(video.srcObject, { mimeType: "video/webm" });
 
-        state.mediaRecorder.onstop = () => {
-            const blob = new Blob(state.recordedChunks, { type: "video/webm" });
-            const url = URL.createObjectURL(blob);
+                    state.mediaRecorder.ondataavailable = (e) => {
+                        if (e.data.size > 0) state.recordedChunks.push(e.data);
+                    };
 
-            // Auto-download the video
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `${state.dance?.name || 'dance'}-${Date.now()}.webm`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        };
+                    state.mediaRecorder.onstop = () => {
+                        const blob = new Blob(state.recordedChunks, { type: "video/webm" });
+                        const url = URL.createObjectURL(blob);
 
-        state.mediaRecorder.start();
-        state.recordStartTime = new Date();
+                        // Auto-download the video
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = `${state.dance?.name || 'dance'}-${Date.now()}.webm`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    };
 
-    } else {
-        inner.className = "w-6 h-6 bg-white rounded-sm";
-        btn.classList.remove("scale-110", "ring-4", "ring-red-900");
+                    state.mediaRecorder.start();
+                    state.recordStartTime = new Date();
 
-        if (state.mediaRecorder && state.mediaRecorder.state !== "inactive") {
-            state.mediaRecorder.stop();
-        }
+                } else {
+                    inner.className = "w-6 h-6 bg-white rounded-sm";
+                    btn.classList.remove("scale-110", "ring-4", "ring-red-900");
 
-        // Submit data to database as before
-        app.submitToDatabase();
-    }
-}
-,
+                    if (state.mediaRecorder && state.mediaRecorder.state !== "inactive") {
+                        state.mediaRecorder.stop();
+                    }
+
+                    // Submit data to database as before
+                    app.submitToDatabase();
+                }
+            }
+            ,
 
             submitToDatabase: async () => {
                 const modal = document.getElementById('processing-modal');
                 modal.classList.remove('hidden');
-                
+
                 const duration = Math.round((new Date() - state.recordStartTime) / 1000);
                 const accuracySummary = app.buildAccuracySummary();
                 const payload = {
@@ -1328,21 +1408,21 @@ if (
 
                 const apiResponse = await api.sendAnalysisData(payload);
                 const verifiedScore = apiResponse.data.accuracy || state.currentScore;
-                
+
                 await practiceSessionsDB.insertOne({
                     dance: state.dance.name,
                     lecture: state.lecture.title,
-                    duration: `${Math.floor(duration/60)}m ${duration%60}s`,
+                    duration: `${Math.floor(duration / 60)}m ${duration % 60}s`,
                     score: verifiedScore,
                     status: apiResponse.data.verified ? "Verified ✅" : "Correction Needed ⚠️",
                     serverMessage: apiResponse.data.serverMessage,
                     correctionPoints: apiResponse.data.correctionPoints,
                     trackingConfidence: accuracySummary.averageTrackingConfidence
                 });
-                
+
                 state.history = await practiceSessionsDB.find();
                 modal.classList.add('hidden');
-                app.switchTab('results'); 
+                app.switchTab('results');
             },
 
             renderResults: () => {
@@ -1385,4 +1465,5 @@ if (
         window.addEventListener('DOMContentLoaded', app.init);
     </script>
 </body>
+
 </html>
