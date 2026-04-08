@@ -794,7 +794,7 @@
             initHolistic: () => {
                 const holistic = new Holistic({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}` });
                 holistic.setOptions({
-                    modelComplexity: 2,
+                    modelComplexity: 1,
                     smoothLandmarks: true,
                     enableSegmentation: false,
                     refineFaceLandmarks: true,
@@ -848,9 +848,9 @@
                         state.cameraStream = await navigator.mediaDevices.getUserMedia({
                             video: {
                                 facingMode: { ideal: "user" },
-                                width: { ideal: 960 },
-                                height: { ideal: 540 },
-                                frameRate: { ideal: 30, max: 30 }
+                                width: { ideal: 640 },
+                                height: { ideal: 360 },
+                                frameRate: { ideal: 24, max: 24 }
                             },
                             audio: false
                         });
@@ -866,7 +866,7 @@
                     if (!state.holistic) state.holistic = app.initHolistic();
 
                     // Controlled loop: avoid overlapping sends + keep stable FPS.
-                    const targetFrameInterval = 1000 / 24;
+                    const targetFrameInterval = 1000 / 15; // 15fps for ML — balances accuracy + performance
                     let lastSentAt = 0;
                     const sendFrame = async (timestamp) => {
                         if (state.mode === 'camera' && !video.paused && !video.ended) {
@@ -929,8 +929,9 @@
                 const analysis = app.analyzePosture(results.poseLandmarks, trackingConfidence); 
                 app.captureAccuracySample(analysis, trackingConfidence);
 
-                // Face Expression Analysis (Abhinaya / Navarasas)
-                if (results.faceLandmarks) {
+                // Face Expression Analysis (Abhinaya / Navarasas) — throttled to every 3rd frame
+                state._faceFrameCount = (state._faceFrameCount || 0) + 1;
+                if (results.faceLandmarks && state._faceFrameCount % 3 === 0) {
                     app.analyzeFaceExpression(results.faceLandmarks);
                 }
                 
@@ -941,8 +942,6 @@
 
                 if (state.showLandmarks) {
                     ctx.save();
-                    ctx.shadowBlur = 12;
-                    ctx.shadowColor = skeletonGlow;
                     
                     if (results.poseLandmarks) {
                         app.drawBodyTracking(ctx, results.poseLandmarks, feedbackColor, trackingConfidence);
@@ -958,35 +957,21 @@
                         drawLandmarks(ctx, results.rightHandLandmarks, {color: '#ffffff', fillColor: feedbackColor, radius: 2});
                     }
 
-                    // Face Mesh Drawing for Expression/Abhinaya Tracking
+                    // Face Mesh Drawing — lightweight (contour + key features only, no tesselation)
                     if (results.faceLandmarks) {
-                        // Draw face mesh with subtle, elegant styling
-                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_TESSELATION, {
-                            color: 'rgba(200, 180, 255, 0.12)', lineWidth: 0.5
-                        });
-                        // Draw face contour
                         drawConnectors(ctx, results.faceLandmarks, FACEMESH_FACE_OVAL, {
-                            color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1.5
+                            color: 'rgba(238, 188, 81, 0.45)', lineWidth: 1.5
                         });
-                        // Draw eyes
                         drawConnectors(ctx, results.faceLandmarks, FACEMESH_LEFT_EYE, {
-                            color: 'rgba(0, 229, 255, 0.6)', lineWidth: 1
+                            color: 'rgba(0, 229, 255, 0.5)', lineWidth: 1
                         });
                         drawConnectors(ctx, results.faceLandmarks, FACEMESH_RIGHT_EYE, {
-                            color: 'rgba(0, 229, 255, 0.6)', lineWidth: 1
+                            color: 'rgba(0, 229, 255, 0.5)', lineWidth: 1
                         });
-                        // Draw eyebrows
-                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LEFT_EYEBROW, {
-                            color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1
-                        });
-                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_RIGHT_EYEBROW, {
-                            color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1
-                        });
-                        // Draw lips
                         drawConnectors(ctx, results.faceLandmarks, FACEMESH_LIPS, {
-                            color: 'rgba(158, 27, 50, 0.7)', lineWidth: 1.5
+                            color: 'rgba(158, 27, 50, 0.6)', lineWidth: 1.5
                         });
-                        // Draw irises for gaze tracking
+                        // Irises
                         if (results.faceLandmarks[468]) {
                             drawLandmarks(ctx, [results.faceLandmarks[468]], {
                                 color: '#00e5ff', fillColor: 'rgba(0, 229, 255, 0.3)', radius: 3
