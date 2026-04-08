@@ -378,6 +378,21 @@
                         </div>
                     </div>
 
+                    <!-- Face Expression / Abhinaya Tracking -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>Expression (Abhinaya)</span>
+                            <span id="val-expression">—</span>
+                        </div>
+                        <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+                            <div id="bar-expression" class="h-full bg-purple-500 w-0 transition-all duration-300"></div>
+                        </div>
+                        <div class="mt-2 flex items-center gap-2">
+                            <span id="expression-emoji" class="text-lg">🎭</span>
+                            <span id="expression-label" class="text-[10px] uppercase tracking-widest text-gray-500">Detecting...</span>
+                        </div>
+                    </div>
+
                     <div class="p-3 bg-white/5 rounded border border-white/5">
                         <p id="ai-feedback" class="text-xs text-center italic text-gray-300">"Initialize camera..."</p>
                     </div>
@@ -782,7 +797,7 @@
                     modelComplexity: 2,
                     smoothLandmarks: true,
                     enableSegmentation: false,
-                    refineFaceLandmarks: false,
+                    refineFaceLandmarks: true,
                     minDetectionConfidence: 0.5,
                     minTrackingConfidence: 0.5
                 });
@@ -913,6 +928,11 @@
                 const trackingConfidence = app.measureTrackingConfidence(results.poseLandmarks);
                 const analysis = app.analyzePosture(results.poseLandmarks, trackingConfidence); 
                 app.captureAccuracySample(analysis, trackingConfidence);
+
+                // Face Expression Analysis (Abhinaya / Navarasas)
+                if (results.faceLandmarks) {
+                    app.analyzeFaceExpression(results.faceLandmarks);
+                }
                 
                 // RESTORED: Critical logic for color feedback
                 const isCorrect = (analysis >= 80 && trackingConfidence >= 65);
@@ -936,6 +956,47 @@
                     if (results.rightHandLandmarks) {
                         drawConnectors(ctx, results.rightHandLandmarks, HAND_CONNECTIONS, {color: feedbackColor, lineWidth: 2});
                         drawLandmarks(ctx, results.rightHandLandmarks, {color: '#ffffff', fillColor: feedbackColor, radius: 2});
+                    }
+
+                    // Face Mesh Drawing for Expression/Abhinaya Tracking
+                    if (results.faceLandmarks) {
+                        // Draw face mesh with subtle, elegant styling
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_TESSELATION, {
+                            color: 'rgba(200, 180, 255, 0.12)', lineWidth: 0.5
+                        });
+                        // Draw face contour
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_FACE_OVAL, {
+                            color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1.5
+                        });
+                        // Draw eyes
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LEFT_EYE, {
+                            color: 'rgba(0, 229, 255, 0.6)', lineWidth: 1
+                        });
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_RIGHT_EYE, {
+                            color: 'rgba(0, 229, 255, 0.6)', lineWidth: 1
+                        });
+                        // Draw eyebrows
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LEFT_EYEBROW, {
+                            color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1
+                        });
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_RIGHT_EYEBROW, {
+                            color: 'rgba(238, 188, 81, 0.5)', lineWidth: 1
+                        });
+                        // Draw lips
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_LIPS, {
+                            color: 'rgba(158, 27, 50, 0.7)', lineWidth: 1.5
+                        });
+                        // Draw irises for gaze tracking
+                        if (results.faceLandmarks[468]) {
+                            drawLandmarks(ctx, [results.faceLandmarks[468]], {
+                                color: '#00e5ff', fillColor: 'rgba(0, 229, 255, 0.3)', radius: 3
+                            });
+                        }
+                        if (results.faceLandmarks[473]) {
+                            drawLandmarks(ctx, [results.faceLandmarks[473]], {
+                                color: '#00e5ff', fillColor: 'rgba(0, 229, 255, 0.3)', radius: 3
+                            });
+                        }
                     }
                     
                     ctx.restore();
@@ -1215,6 +1276,15 @@
                 const ankleSpread = Math.abs(leftAnkle.x - rightAnkle.x) / hipWidth;
                 const verticalStance = getDistance(nose, hipCenter) / torsoHeight;
 
+                // Lower body score — evaluates stance depth, knee symmetry, and ankle grounding
+                const kneeBend = Math.abs(leftKnee.y - leftHip.y) / torsoHeight;
+                const kneeSymmetryScore = clampScore(100 - (kneeSpacing * 80));
+                const stanceWidthScore = clampScore(ankleSpread * 50);
+                const kneeBendScore = clampScore(kneeBend * 120);
+                const lowerBodyScore = clampScore(Math.round(
+                    (kneeSymmetryScore * 0.35) + (stanceWidthScore * 0.30) + (kneeBendScore * 0.35)
+                ));
+
                 // Scoring weights refined for classical dance (posture + symmetry)
                 const spineScore = clampScore(100 - (spineOffset * 60));
                 const balanceScore = clampScore(100 - ((shoulderTilt * 50) + (hipTilt * 40)));
@@ -1268,6 +1338,114 @@
 
                 return smoothedScore;
             },
+
+            // ── Face Expression Analysis (Navarasas) ──
+            analyzeFaceExpression: (faceLandmarks) => {
+                if (!faceLandmarks || faceLandmarks.length < 468) return;
+
+                const dist = (a, b) => Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+
+                // Key face landmark indices (MediaPipe Face Mesh 468+ points)
+                // Mouth
+                const upperLip = faceLandmarks[13];
+                const lowerLip = faceLandmarks[14];
+                const mouthLeft = faceLandmarks[61];
+                const mouthRight = faceLandmarks[291];
+
+                // Eyes
+                const leftEyeTop = faceLandmarks[159];
+                const leftEyeBot = faceLandmarks[145];
+                const rightEyeTop = faceLandmarks[386];
+                const rightEyeBot = faceLandmarks[374];
+
+                // Eyebrows
+                const leftBrowInner = faceLandmarks[107];
+                const leftBrowOuter = faceLandmarks[70];
+                const rightBrowInner = faceLandmarks[336];
+                const rightBrowOuter = faceLandmarks[300];
+                const leftEyeRef = faceLandmarks[33];
+                const rightEyeRef = faceLandmarks[263];
+
+                // Nose tip & chin for head tilt
+                const noseTip = faceLandmarks[1];
+                const chin = faceLandmarks[152];
+                const forehead = faceLandmarks[10];
+
+                // Calculate facial metrics
+                const faceHeight = dist(forehead, chin);
+                if (faceHeight < 0.01) return; // face too small/absent
+
+                const mouthOpenness = dist(upperLip, lowerLip) / faceHeight;
+                const mouthWidth = dist(mouthLeft, mouthRight) / faceHeight;
+                const leftEyeOpenness = dist(leftEyeTop, leftEyeBot) / faceHeight;
+                const rightEyeOpenness = dist(rightEyeTop, rightEyeBot) / faceHeight;
+                const avgEyeOpenness = (leftEyeOpenness + rightEyeOpenness) / 2;
+
+                const leftBrowHeight = (leftEyeRef.y - leftBrowInner.y) / faceHeight;
+                const rightBrowHeight = (rightEyeRef.y - rightBrowInner.y) / faceHeight;
+                const avgBrowHeight = (leftBrowHeight + rightBrowHeight) / 2;
+                const browFurrow = dist(leftBrowInner, rightBrowInner) / faceHeight;
+
+                // Smile detection: mouth corners relative to mouth center
+                const mouthCenterY = (upperLip.y + lowerLip.y) / 2;
+                const smileScore = ((mouthCenterY - mouthLeft.y) + (mouthCenterY - mouthRight.y)) / 2 / faceHeight;
+
+                // Determine Navarasa (Nine Emotions of Classical Dance)
+                let expression = { name: 'Shanta', emoji: '🧘', desc: 'Peace/Serenity', confidence: 50 };
+
+                if (mouthOpenness > 0.06 && avgEyeOpenness > 0.045 && avgBrowHeight > 0.12) {
+                    // Wide mouth + wide eyes + raised brows = Adbhuta (Wonder)
+                    expression = { name: 'Adbhuta', emoji: '😲', desc: 'Wonder/Amazement', confidence: Math.min(100, Math.round(mouthOpenness * 800 + avgEyeOpenness * 500)) };
+                } else if (smileScore > 0.008 && mouthWidth > 0.28 && avgEyeOpenness > 0.025) {
+                    // Smile + wide mouth + relaxed eyes = Hasya (Joy)
+                    expression = { name: 'Hasya', emoji: '😊', desc: 'Joy/Happiness', confidence: Math.min(100, Math.round(smileScore * 4000 + mouthWidth * 100)) };
+                } else if (browFurrow < 0.11 && avgBrowHeight < 0.08 && smileScore < -0.003) {
+                    // Furrowed brows + low brows + frown = Raudra (Anger)
+                    expression = { name: 'Raudra', emoji: '😠', desc: 'Anger/Fury', confidence: Math.min(100, Math.round((0.11 - browFurrow) * 1500 + Math.abs(smileScore) * 3000)) };
+                } else if (avgEyeOpenness > 0.05 && avgBrowHeight > 0.13 && mouthOpenness > 0.04) {
+                    // Very wide eyes + high brows = Bhayanaka (Fear)
+                    expression = { name: 'Bhayanaka', emoji: '😨', desc: 'Fear/Terror', confidence: Math.min(100, Math.round(avgEyeOpenness * 800 + avgBrowHeight * 300)) };
+                } else if (smileScore < -0.005 && avgEyeOpenness < 0.03 && avgBrowHeight < 0.09) {
+                    // Frown + narrow eyes + low brows = Karuna (Sorrow)
+                    expression = { name: 'Karuna', emoji: '😢', desc: 'Sorrow/Compassion', confidence: Math.min(100, Math.round(Math.abs(smileScore) * 5000 + (0.04 - avgEyeOpenness) * 1500)) };
+                } else if (mouthOpenness > 0.05 && smileScore < -0.002 && browFurrow < 0.12) {
+                    // Open mouth + frown + furrowed = Bibhatsa (Disgust)
+                    expression = { name: 'Bibhatsa', emoji: '🤢', desc: 'Disgust/Aversion', confidence: Math.min(100, Math.round(mouthOpenness * 600 + Math.abs(smileScore) * 3000)) };
+                } else if (avgEyeOpenness < 0.025 && smileScore > 0.003 && mouthWidth > 0.25) {
+                    // Narrow eyes + slight smile = Veera (Heroism)
+                    expression = { name: 'Veera', emoji: '💪', desc: 'Heroism/Valor', confidence: Math.min(100, Math.round((0.035 - avgEyeOpenness) * 2000 + smileScore * 3000)) };
+                } else if (smileScore > 0.005 && avgEyeOpenness > 0.03 && avgBrowHeight > 0.10) {
+                    // Gentle smile + open eyes = Sringara (Love)
+                    expression = { name: 'Sringara', emoji: '🥰', desc: 'Love/Beauty', confidence: Math.min(100, Math.round(smileScore * 5000 + avgEyeOpenness * 500)) };
+                } else if (avgEyeOpenness < 0.022 && mouthOpenness < 0.02 && Math.abs(smileScore) < 0.003) {
+                    // Closed eyes + closed mouth + neutral = Shanta (Peace)
+                    expression = { name: 'Shanta', emoji: '🧘', desc: 'Peace/Serenity', confidence: Math.min(100, Math.round((0.03 - avgEyeOpenness) * 2000 + 40)) };
+                }
+
+                expression.confidence = Math.max(20, Math.min(100, expression.confidence));
+
+                // Update UI
+                const emojiEl = document.getElementById('expression-emoji');
+                const labelEl = document.getElementById('expression-label');
+                const valEl = document.getElementById('val-expression');
+                const barEl = document.getElementById('bar-expression');
+
+                if (emojiEl) emojiEl.textContent = expression.emoji;
+                if (labelEl) labelEl.textContent = `${expression.name} — ${expression.desc}`;
+                if (valEl) valEl.textContent = expression.confidence + '%';
+                if (barEl) {
+                    barEl.style.width = expression.confidence + '%';
+                    barEl.classList.remove('bg-purple-500', 'bg-pink-500', 'bg-cyan-500', 'bg-amber-500');
+                    if (expression.name === 'Sringara' || expression.name === 'Hasya') barEl.classList.add('bg-pink-500');
+                    else if (expression.name === 'Raudra' || expression.name === 'Bhayanaka') barEl.classList.add('bg-amber-500');
+                    else if (expression.name === 'Adbhuta') barEl.classList.add('bg-cyan-500');
+                    else barEl.classList.add('bg-purple-500');
+                }
+
+                // Store for recording metrics
+                state.latestExpression = expression;
+            },
+
             detectBhumiPranam: (results) => {
                 if (!results.poseLandmarks || !results.leftHandLandmarks || !results.rightHandLandmarks) {
                     return { done: false, step: "Pose not visible" };
