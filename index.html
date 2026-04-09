@@ -949,17 +949,26 @@
                 const countEl = document.getElementById('dance-count');
                 if (countEl) countEl.textContent = filtered.length;
 
-                grid.innerHTML = filtered.map(d => `
+                grid.innerHTML = filtered.map(d => {
+                    const tagColors = {
+                        'Classical': 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]',
+                        'Folk': 'bg-emerald-500/20 text-emerald-400',
+                        'Tribal': 'bg-orange-500/20 text-orange-400',
+                        'Martial': 'bg-red-500/20 text-red-400',
+                        'Ritual': 'bg-purple-500/20 text-purple-400',
+                    };
+                    const tagClass = tagColors[d.tag] || 'bg-gray-500/20 text-gray-400';
+                    return `
                     <div onclick="app.selectDance('${d.id}')" class="group relative h-52 rounded-sm overflow-hidden cursor-pointer shadow-2xl border border-white/5 hover:border-[var(--color-primary)] transition-all">
                         <img src="${d.img}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" alt="${d.name}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518131393663-39c2f6d62325?q=80&w=600'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90"></div>
                         <div class="absolute bottom-0 left-0 p-6">
-                            <span class="inline-block px-2 py-0.5 text-[9px] uppercase tracking-widest font-bold rounded-sm mb-2 ${d.tag === 'Classical' ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : d.tag === 'Folk' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-purple-500/20 text-purple-400'}">${d.tag}</span>
+                            <span class="inline-block px-2 py-0.5 text-[9px] uppercase tracking-widest font-bold rounded-sm mb-2 ${tagClass}">${d.tag}</span>
                             <p class="text-[var(--color-text-muted)] text-xs font-bold uppercase tracking-widest mb-1">${d.origin}</p>
                             <h3 class="text-2xl font-display text-white mb-2 group-hover:translate-x-2 transition-transform">${d.name}</h3>
                         </div>
                     </div>
-                `).join('');
+                `;}).join('');
             },
 
             selectDance: (id) => {
