@@ -255,12 +255,14 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
                 <div>
                     <h2 class="text-3xl md:text-4xl font-display text-white mb-1">Choose Your Form</h2>
-                    <p class="text-sm text-gray-400"><span id="dance-count">16</span> dance traditions across India</p>
+                    <p class="text-sm text-gray-400"><span id="dance-count">28</span> dance traditions across India</p>
                 </div>
                 <div class="flex gap-2 flex-wrap" id="filter-tabs">
                     <button onclick="app.renderDances('all')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-[var(--color-primary)] bg-[var(--color-primary)] text-black" data-filter="all">All</button>
                     <button onclick="app.renderDances('classical')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="classical">Classical</button>
                     <button onclick="app.renderDances('folk')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="folk">Folk</button>
+                    <button onclick="app.renderDances('tribal')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="tribal">Tribal</button>
+                    <button onclick="app.renderDances('martial')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="martial">Martial</button>
                     <button onclick="app.renderDances('ritual')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="ritual">Ritual</button>
                 </div>
             </div>
@@ -646,9 +648,9 @@
         }
         const practiceSessionsDB = new MongoService('sessions');
 
-        // ══════════════════════════════════════════════
-        // DANCE FORMS — 8 Classical + 8 Folk/Regional
-        // ══════════════════════════════════════════════
+        // ══════════════════════════════════════════════════════
+        // DANCE FORMS — 8 Classical + 20 Folk/Tribal/Martial/Ritual
+        // ══════════════════════════════════════════════════════
         const DANCES = [
             // ── Classical (Sangeet Natak Akademi recognized) ──
             { id: 'bharatanatyam', name: 'Bharatanatyam', img: 'media/img/BHARATNATYAM.png', origin: 'Tamil Nadu', tag: 'Classical' },
@@ -661,14 +663,32 @@
             { id: 'sattriya', name: 'Sattriya', img: 'media/img/SATTRIYA.png', origin: 'Assam', tag: 'Classical' },
 
             // ── Folk & Regional ──
-            { id: 'chhau', name: 'Chhau', img: 'https://images.unsplash.com/photo-1633543250479-9b432e3e05ff?q=80&w=800&auto=format&fit=crop', origin: 'Jharkhand / West Bengal', tag: 'Folk' },
             { id: 'garba', name: 'Garba', img: 'https://images.unsplash.com/photo-1603228254119-e6a4d095dc59?q=80&w=800&auto=format&fit=crop', origin: 'Gujarat', tag: 'Folk' },
             { id: 'bhangra', name: 'Bhangra', img: 'https://images.unsplash.com/photo-1583309219338-a582f1f9ca6b?q=80&w=800&auto=format&fit=crop', origin: 'Punjab', tag: 'Folk' },
             { id: 'lavani', name: 'Lavani', img: 'https://images.unsplash.com/photo-1616530940027-e3653e392cf7?q=80&w=800&auto=format&fit=crop', origin: 'Maharashtra', tag: 'Folk' },
-            { id: 'yakshagana', name: 'Yakshagana', img: 'https://images.unsplash.com/photo-1598262520676-77420050f091?q=80&w=800&auto=format&fit=crop', origin: 'Karnataka', tag: 'Classical-Folk' },
             { id: 'bihu', name: 'Bihu', img: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=800&auto=format&fit=crop', origin: 'Assam', tag: 'Folk' },
             { id: 'ghoomar', name: 'Ghoomar', img: 'https://images.unsplash.com/photo-1612438214708-f428a707dd4e?q=80&w=800&auto=format&fit=crop', origin: 'Rajasthan', tag: 'Folk' },
+            { id: 'dandiya', name: 'Dandiya Raas', img: 'https://images.unsplash.com/photo-1545431781-3e1b506e9a37?q=80&w=800&auto=format&fit=crop', origin: 'Gujarat', tag: 'Folk' },
+            { id: 'rouf', name: 'Rouf', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800&auto=format&fit=crop', origin: 'Jammu & Kashmir', tag: 'Folk' },
+            { id: 'dollu_kunitha', name: 'Dollu Kunitha', img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop', origin: 'Karnataka', tag: 'Folk' },
+            { id: 'fugdi', name: 'Fugdi', img: 'https://images.unsplash.com/photo-1545959570-a94084071b5d?q=80&w=800&auto=format&fit=crop', origin: 'Goa / Konkan', tag: 'Folk' },
+            { id: 'thiruvathira', name: 'Thiruvathira', img: 'https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?q=80&w=800&auto=format&fit=crop', origin: 'Kerala', tag: 'Folk' },
+            { id: 'sambalpuri', name: 'Sambalpuri', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&auto=format&fit=crop', origin: 'Western Odisha', tag: 'Folk' },
+            { id: 'kummi', name: 'Kummi', img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=800&auto=format&fit=crop', origin: 'Tamil Nadu', tag: 'Folk' },
+
+            // ── Tribal ──
+            { id: 'kalbelia', name: 'Kalbelia', img: 'https://images.unsplash.com/photo-1605540436563-5bca919ae766?q=80&w=800&auto=format&fit=crop', origin: 'Rajasthan', tag: 'Tribal' },
+            { id: 'cheraw', name: 'Cheraw (Bamboo)', img: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?q=80&w=800&auto=format&fit=crop', origin: 'Mizoram', tag: 'Tribal' },
+            { id: 'dumhal', name: 'Dumhal', img: 'https://images.unsplash.com/photo-1518599807935-37015b9cefcb?q=80&w=800&auto=format&fit=crop', origin: 'Jammu & Kashmir', tag: 'Tribal' },
+
+            // ── Martial / Semi-Classical ──
+            { id: 'chhau', name: 'Chhau', img: 'https://images.unsplash.com/photo-1633543250479-9b432e3e05ff?q=80&w=800&auto=format&fit=crop', origin: 'Jharkhand / W. Bengal', tag: 'Martial' },
+            { id: 'yakshagana', name: 'Yakshagana', img: 'https://images.unsplash.com/photo-1598262520676-77420050f091?q=80&w=800&auto=format&fit=crop', origin: 'Karnataka', tag: 'Martial' },
+            { id: 'gotipua', name: 'Gotipua', img: 'https://images.unsplash.com/photo-1547153760-18fc86c3a46e?q=80&w=800&auto=format&fit=crop', origin: 'Odisha', tag: 'Martial' },
+
+            // ── Ritual ──
             { id: 'theyyam', name: 'Theyyam', img: 'https://images.unsplash.com/photo-1590058535498-88eadce2e84e?q=80&w=800&auto=format&fit=crop', origin: 'Kerala', tag: 'Ritual' },
+            { id: 'padayani', name: 'Padayani', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=800&auto=format&fit=crop', origin: 'Kerala', tag: 'Ritual' },
         ];
 
         // ══════════════════════════════════════════════
@@ -770,6 +790,78 @@
                 { id: 2, title: 'Vellattam (Preliminary)', duration: '15 min', desc: 'Preliminary dance without full costume.' },
                 { id: 3, title: 'Theyyattam (Main Dance)', duration: '22 min', desc: 'Full ritual dance with divine embodiment.' },
                 { id: 4, title: 'Fire Walk Sequence', duration: '18 min', desc: 'Vigorous steps mimicking the sacred fire ritual.' },
+            ],
+            dandiya: [
+                { id: 1, title: 'Ek Taali (Single Hit)', duration: '8 min', desc: 'Basic single-stick partner patterns.' },
+                { id: 2, title: 'Be Taali (Double Hit)', duration: '12 min', desc: 'Two-stick crossing patterns with partner.' },
+                { id: 3, title: 'Circle Formation', duration: '15 min', desc: 'Moving in concentric circles switching partners.' },
+                { id: 4, title: 'Speed Raas Garba', duration: '18 min', desc: 'High-speed stick choreography with spins.' },
+            ],
+            rouf: [
+                { id: 1, title: 'Bande Pather (Entry)', duration: '8 min', desc: 'Two-row facing formation entry steps.' },
+                { id: 2, title: 'Synchronized Sway', duration: '12 min', desc: 'Graceful side-to-side swaying in unison.' },
+                { id: 3, title: 'Arm Interlocking', duration: '14 min', desc: 'Partners link arms for rotational steps.' },
+                { id: 4, title: 'Festival Sequence', duration: '18 min', desc: 'Complete Rouf for Eid and spring celebrations.' },
+            ],
+            dollu_kunitha: [
+                { id: 1, title: 'Drum Mounting', duration: '10 min', desc: 'Strapping and balancing the dollu drum.' },
+                { id: 2, title: 'Basic Rhythms', duration: '14 min', desc: 'Foundational drum-beat and step patterns.' },
+                { id: 3, title: 'Acrobatic Moves', duration: '18 min', desc: 'Jumps and spins while playing the drum.' },
+                { id: 4, title: 'Group Synchronization', duration: '20 min', desc: 'Full troupe formation and rhythm alignment.' },
+            ],
+            fugdi: [
+                { id: 1, title: 'Circle Clapping', duration: '8 min', desc: 'Basic circular formation with rhythmic claps.' },
+                { id: 2, title: 'Foot Stamping Patterns', duration: '10 min', desc: 'Percussive footwork synced with clapping.' },
+                { id: 3, title: 'Speed Rounds', duration: '14 min', desc: 'Accelerating tempo with partner switching.' },
+                { id: 4, title: 'Harvest Celebration', duration: '16 min', desc: 'Full Fugdi set for Ganesh Chaturthi.' },
+            ],
+            thiruvathira: [
+                { id: 1, title: 'Circular Sway (Kaikotti)', duration: '10 min', desc: 'Gentle circular clapping dance steps.' },
+                { id: 2, title: 'Lamp Dance Steps', duration: '14 min', desc: 'Graceful movements around the nilavilakku lamp.' },
+                { id: 3, title: 'Mudra Sequences', duration: '16 min', desc: 'Hand gestures narrating Krishna-Kamadeva story.' },
+                { id: 4, title: 'Full Thiruvathira Set', duration: '20 min', desc: 'Complete dance for Thiruvathira festival night.' },
+            ],
+            sambalpuri: [
+                { id: 1, title: 'Dalkhai Steps', duration: '10 min', desc: 'Harvest celebration dance — basic footwork.' },
+                { id: 2, title: 'Rasarkeli Moves', duration: '14 min', desc: 'Romantic dance movements with playful gestures.' },
+                { id: 3, title: 'Nachni Patterns', duration: '16 min', desc: 'Graceful feminine dance styles of western Odisha.' },
+                { id: 4, title: 'Festival Choreography', duration: '18 min', desc: 'Full Sambalpuri set for Nuakhai celebrations.' },
+            ],
+            kummi: [
+                { id: 1, title: 'Basic Clap Circle', duration: '8 min', desc: 'Rhythmic clapping in circular formation.' },
+                { id: 2, title: 'Kolattam (Stick Kummi)', duration: '12 min', desc: 'Stick-based variant with crossing patterns.' },
+                { id: 3, title: 'Song Synchronization', duration: '14 min', desc: 'Matching steps to traditional Kummi paattu.' },
+                { id: 4, title: 'Temple Celebration Set', duration: '16 min', desc: 'Complete Kummi for Pongal and temple festivals.' },
+            ],
+            kalbelia: [
+                { id: 1, title: 'Snake Sway (Basic)', duration: '10 min', desc: 'Sinuous upper body undulations mimicking a cobra.' },
+                { id: 2, title: 'Floor Spins', duration: '14 min', desc: 'Low spinning movements with flowing skirt.' },
+                { id: 3, title: 'Been Rhythm Sync', duration: '16 min', desc: 'Dancing to the snake charmer\'s been instrument.' },
+                { id: 4, title: 'Full Kalbelia Performance', duration: '20 min', desc: 'Complete hypnotic serpent dance sequence.' },
+            ],
+            cheraw: [
+                { id: 1, title: 'Bamboo Grid Entry', duration: '10 min', desc: 'Entering and exiting the bamboo grid safely.' },
+                { id: 2, title: 'Basic Hop Patterns', duration: '14 min', desc: 'Two-foot and single-foot hops between poles.' },
+                { id: 3, title: 'Speed Sequences', duration: '16 min', desc: 'Fast bamboo clapping with rapid footwork.' },
+                { id: 4, title: 'Group Competition Set', duration: '20 min', desc: 'Full Cheraw with multiple bamboo lanes.' },
+            ],
+            dumhal: [
+                { id: 1, title: 'Tall Hat Balance', duration: '8 min', desc: 'Dance movements while balancing the conical hat.' },
+                { id: 2, title: 'Banner Planting', duration: '12 min', desc: 'Ritualistic banner placement with stamping steps.' },
+                { id: 3, title: 'Circle of Warriors', duration: '16 min', desc: 'Group circular dance around the banner.' },
+                { id: 4, title: 'Victory Celebration', duration: '18 min', desc: 'Full Dumhal sequence for tribal gatherings.' },
+            ],
+            gotipua: [
+                { id: 1, title: 'Bandha Nrutya (Acrobatics)', duration: '12 min', desc: 'Acrobatic postures forming shapes and symbols.' },
+                { id: 2, title: 'Abhinaya (Expression)', duration: '16 min', desc: 'Feminine grace and storytelling through movement.' },
+                { id: 3, title: 'Ground Sequences', duration: '18 min', desc: 'Floor-level acrobatic spins and bridges.' },
+                { id: 4, title: 'Full Gotipua Recital', duration: '22 min', desc: 'Complete performance piece with Odissi influences.' },
+            ],
+            padayani: [
+                { id: 1, title: 'Kolam Preparation', duration: '10 min', desc: 'Understanding the sacred mask and costume.' },
+                { id: 2, title: 'Thappu Beats', duration: '14 min', desc: 'Rhythmic movement synced to Thappu drumming.' },
+                { id: 3, title: 'Bhairavi Kolam Dance', duration: '18 min', desc: 'Fierce Bhairavi character dance sequence.' },
+                { id: 4, title: 'Temple Procession', duration: '22 min', desc: 'Full ritual procession dance with torches.' },
             ],
         };
 
