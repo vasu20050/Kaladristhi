@@ -251,6 +251,20 @@
         </header>
 
         <main class="relative z-10 pt-32 pb-12 px-8 md:px-12 w-full max-w-7xl mx-auto">
+            <!-- Section Heading + Filter Tabs -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-display text-white mb-1">Choose Your Form</h2>
+                    <p class="text-sm text-gray-400"><span id="dance-count">16</span> dance traditions across India</p>
+                </div>
+                <div class="flex gap-2 flex-wrap" id="filter-tabs">
+                    <button onclick="app.renderDances('all')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-[var(--color-primary)] bg-[var(--color-primary)] text-black" data-filter="all">All</button>
+                    <button onclick="app.renderDances('classical')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="classical">Classical</button>
+                    <button onclick="app.renderDances('folk')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="folk">Folk</button>
+                    <button onclick="app.renderDances('ritual')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-white/15 text-gray-400 hover:text-white hover:border-white/30" data-filter="ritual">Ritual</button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="dance-grid"></div>
         </main>
 
@@ -632,23 +646,132 @@
         }
         const practiceSessionsDB = new MongoService('sessions');
 
+        // ══════════════════════════════════════════════
+        // DANCE FORMS — 8 Classical + 8 Folk/Regional
+        // ══════════════════════════════════════════════
         const DANCES = [
-            { id: 'bharatanatyam', name: 'Bharatanatyam', img: 'media/img/BHARATNATYAM.png', origin: 'Tamil Nadu' },
-            { id: 'kathak', name: 'Kathak', img: 'media/img/KATHAK.png', origin: 'North India' },
-            { id: 'odissi', name: 'Odissi', img: 'media/img/ODISSI.png', origin: 'Odisha' },
-            { id: 'kuchipudi', name: 'Kuchipudi', img: 'media/img/KUCHIPUDI.png', origin: 'Andhra Pradesh' },
-            { id: 'kathakali', name: 'Kathakali', img: 'media/img/KATHAKALI.png', origin: 'Kerala' },
-            { id: 'mohiniyattam', name: 'Mohiniyattam', img: 'media/img/MOHINIYATTAM.png', origin: 'Kerala' },
-            { id: 'manipuri', name: 'Manipuri', img: 'media/img/MANIPURI.png', origin: 'Manipur' },
-            { id: 'sattriya', name: 'Sattriya', img: 'media/img/SATTRIYA.png', origin: 'Assam' },
+            // ── Classical (Sangeet Natak Akademi recognized) ──
+            { id: 'bharatanatyam', name: 'Bharatanatyam', img: 'media/img/BHARATNATYAM.png', origin: 'Tamil Nadu', tag: 'Classical' },
+            { id: 'kathak', name: 'Kathak', img: 'media/img/KATHAK.png', origin: 'North India', tag: 'Classical' },
+            { id: 'odissi', name: 'Odissi', img: 'media/img/ODISSI.png', origin: 'Odisha', tag: 'Classical' },
+            { id: 'kuchipudi', name: 'Kuchipudi', img: 'media/img/KUCHIPUDI.png', origin: 'Andhra Pradesh', tag: 'Classical' },
+            { id: 'kathakali', name: 'Kathakali', img: 'media/img/KATHAKALI.png', origin: 'Kerala', tag: 'Classical' },
+            { id: 'mohiniyattam', name: 'Mohiniyattam', img: 'media/img/MOHINIYATTAM.png', origin: 'Kerala', tag: 'Classical' },
+            { id: 'manipuri', name: 'Manipuri', img: 'media/img/MANIPURI.png', origin: 'Manipur', tag: 'Classical' },
+            { id: 'sattriya', name: 'Sattriya', img: 'media/img/SATTRIYA.png', origin: 'Assam', tag: 'Classical' },
+
+            // ── Folk & Regional ──
+            { id: 'chhau', name: 'Chhau', img: 'https://images.unsplash.com/photo-1633543250479-9b432e3e05ff?q=80&w=800&auto=format&fit=crop', origin: 'Jharkhand / West Bengal', tag: 'Folk' },
+            { id: 'garba', name: 'Garba', img: 'https://images.unsplash.com/photo-1603228254119-e6a4d095dc59?q=80&w=800&auto=format&fit=crop', origin: 'Gujarat', tag: 'Folk' },
+            { id: 'bhangra', name: 'Bhangra', img: 'https://images.unsplash.com/photo-1583309219338-a582f1f9ca6b?q=80&w=800&auto=format&fit=crop', origin: 'Punjab', tag: 'Folk' },
+            { id: 'lavani', name: 'Lavani', img: 'https://images.unsplash.com/photo-1616530940027-e3653e392cf7?q=80&w=800&auto=format&fit=crop', origin: 'Maharashtra', tag: 'Folk' },
+            { id: 'yakshagana', name: 'Yakshagana', img: 'https://images.unsplash.com/photo-1598262520676-77420050f091?q=80&w=800&auto=format&fit=crop', origin: 'Karnataka', tag: 'Classical-Folk' },
+            { id: 'bihu', name: 'Bihu', img: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=800&auto=format&fit=crop', origin: 'Assam', tag: 'Folk' },
+            { id: 'ghoomar', name: 'Ghoomar', img: 'https://images.unsplash.com/photo-1612438214708-f428a707dd4e?q=80&w=800&auto=format&fit=crop', origin: 'Rajasthan', tag: 'Folk' },
+            { id: 'theyyam', name: 'Theyyam', img: 'https://images.unsplash.com/photo-1590058535498-88eadce2e84e?q=80&w=800&auto=format&fit=crop', origin: 'Kerala', tag: 'Ritual' },
         ];
 
-        const LECTURES = [
-            { id: 1, title: 'Pranam (Salutation)', duration: '8 min', desc: 'Invocation of Mother Earth.' },
-            { id: 2, title: 'Aramandi (Stance)', duration: '15 min', desc: 'Half-seated posture basics.' },
-            { id: 3, title: 'Nritta Hastas', duration: '20 min', desc: 'Pure dance hand gestures.' },
-            { id: 4, title: 'Abhinaya (Expression)', duration: '25 min', desc: 'The nine emotions.' },
-        ];
+        // ══════════════════════════════════════════════
+        // CURRICULA — Unique lectures per dance form
+        // ══════════════════════════════════════════════
+        const CURRICULA = {
+            bharatanatyam: [
+                { id: 1, title: 'Bhumi Pranam (Salutation)', duration: '8 min', desc: 'Invocation of Mother Earth before practice.' },
+                { id: 2, title: 'Aramandi (Half-Sit Stance)', duration: '15 min', desc: 'The foundational half-seated posture.' },
+                { id: 3, title: 'Nritta Hastas (Hand Gestures)', duration: '20 min', desc: 'Single and double hand gestures in pure dance.' },
+                { id: 4, title: 'Abhinaya (Expression)', duration: '25 min', desc: 'Conveying the Navarasas — nine emotions.' },
+            ],
+            kathak: [
+                { id: 1, title: 'Tatkar (Footwork)', duration: '12 min', desc: 'Basic rhythmic foot patterns and speed layers.' },
+                { id: 2, title: 'Tukda & Toda', duration: '18 min', desc: 'Short rhythmic compositions with ending flourishes.' },
+                { id: 3, title: 'Chakkar (Spins)', duration: '15 min', desc: 'Controlled single and multiple spins.' },
+                { id: 4, title: 'Gat Bhav (Story)', duration: '22 min', desc: 'Narrative movement portraying characters and moods.' },
+            ],
+            odissi: [
+                { id: 1, title: 'Chouka (Square Stance)', duration: '10 min', desc: 'Symmetric masculine stance inspired by Jagannath Temple.' },
+                { id: 2, title: 'Tribhangi (Three Bends)', duration: '15 min', desc: 'The iconic triple-bend S-curve posture.' },
+                { id: 3, title: 'Mudras of Odissi', duration: '18 min', desc: 'Hand gestures unique to the Odissi vocabulary.' },
+                { id: 4, title: 'Pallavi (Pure Dance)', duration: '25 min', desc: 'Elaborate pure dance set to a raga.' },
+            ],
+            kuchipudi: [
+                { id: 1, title: 'Jathi Swaram', duration: '10 min', desc: 'Pure rhythmic dance set to musical notes.' },
+                { id: 2, title: 'Sthanakam (Stances)', duration: '14 min', desc: 'Foundational standing postures and transitions.' },
+                { id: 3, title: 'Tarangam (Brass Plate)', duration: '20 min', desc: 'Balancing and dancing on a brass plate.' },
+                { id: 4, title: 'Shabdam (Narrative)', duration: '22 min', desc: 'Story-based dance with lyrical expression.' },
+            ],
+            kathakali: [
+                { id: 1, title: 'Kaal Meipayattu (Footwork)', duration: '12 min', desc: 'Powerful lower body exercises and stamps.' },
+                { id: 2, title: 'Navarasas (Facial)', duration: '20 min', desc: 'Mastering the nine emotions through face and eyes.' },
+                { id: 3, title: 'Mudra Language', duration: '18 min', desc: '24 basic mudras for character dialogue.' },
+                { id: 4, title: 'Character Types', duration: '25 min', desc: 'Pacha, Kathi, Thadi — hero, villain, and demon archetypes.' },
+            ],
+            mohiniyattam: [
+                { id: 1, title: 'Atavukal (Basic Steps)', duration: '10 min', desc: 'Graceful swaying steps and weight shifts.' },
+                { id: 2, title: 'Cholkettu (Rhythmic)', duration: '15 min', desc: 'Invocatory pure dance with flowing arms.' },
+                { id: 3, title: 'Padavarnam', duration: '22 min', desc: 'Central piece combining pure and expressive dance.' },
+                { id: 4, title: 'Sringara Abhinaya', duration: '20 min', desc: 'Love and devotion expressed through Lasya.' },
+            ],
+            manipuri: [
+                { id: 1, title: 'Ras Leela Basics', duration: '12 min', desc: 'Gentle circular formations of Krishna-Gopi dance.' },
+                { id: 2, title: 'Cholom (Drum Dance)', duration: '15 min', desc: 'Vigorous Pung Cholom with drum rhythms.' },
+                { id: 3, title: 'Lai Haraoba Steps', duration: '18 min', desc: 'Ancient ritualistic dance movements.' },
+                { id: 4, title: 'Kartal Cholom', duration: '14 min', desc: 'Cymbal dance with devotional rhythms.' },
+            ],
+            sattriya: [
+                { id: 1, title: 'Mati Akhora (Floor)', duration: '10 min', desc: 'Seated and floor-level foundational exercises.' },
+                { id: 2, title: 'Ora Akhora (Standing)', duration: '14 min', desc: 'Standing exercises with rhythmic patterns.' },
+                { id: 3, title: 'Jhumura & Nad Bhangi', duration: '18 min', desc: 'Graceful torso movements and neck isolations.' },
+                { id: 4, title: 'Sutradhara Nritya', duration: '22 min', desc: 'Narrative dance from the Ankia Naat tradition.' },
+            ],
+            chhau: [
+                { id: 1, title: 'Ufli-Chali (Basic Walk)', duration: '10 min', desc: 'Grounded martial walking patterns with bent knees.' },
+                { id: 2, title: 'Topka & Thenka (Jumps)', duration: '15 min', desc: 'Leaps and stamps derived from martial arts.' },
+                { id: 3, title: 'Animal Charis (Characters)', duration: '20 min', desc: 'Movements mimicking animals — lion, eagle, serpent.' },
+                { id: 4, title: 'Battle Choreography', duration: '22 min', desc: 'Warrior duet sequences from Mahabharata themes.' },
+            ],
+            garba: [
+                { id: 1, title: 'Dodhiyu (2-Clap)', duration: '8 min', desc: 'Basic two-clap circular step pattern.' },
+                { id: 2, title: 'Trikoniya (3-Clap)', duration: '12 min', desc: 'Three-clap with direction changes.' },
+                { id: 3, title: 'Dandiya Raas Basics', duration: '15 min', desc: 'Partner stick dance — timing and coordination.' },
+                { id: 4, title: 'Speed Garba (Hinch)', duration: '18 min', desc: 'Fast-paced footwork with spinning transitions.' },
+            ],
+            bhangra: [
+                { id: 1, title: 'Jhumar (Sway Step)', duration: '8 min', desc: 'Gentle swaying entry movement.' },
+                { id: 2, title: 'Dhamaal (Power Step)', duration: '12 min', desc: 'High-energy single-leg jumps and kicks.' },
+                { id: 3, title: 'Shoulder Shrugs & Arms', duration: '14 min', desc: 'Iconic raised-arm and shoulder movements.' },
+                { id: 4, title: 'Dhol Sync & Freestyle', duration: '18 min', desc: 'Full choreography synced to dhol rhythm.' },
+            ],
+            lavani: [
+                { id: 1, title: 'Aangan (Footwork)', duration: '10 min', desc: 'Rhythmic feet patterns with ghungroo.' },
+                { id: 2, title: 'Nauvari Draping', duration: '8 min', desc: 'Movement while managing the nine-yard saree.' },
+                { id: 3, title: 'Bhrukuti Abhinaya (Eyes)', duration: '15 min', desc: 'Expressive eye and eyebrow movements.' },
+                { id: 4, title: 'Powada (Heroic Narrative)', duration: '20 min', desc: 'Storytelling through bold movement and verse.' },
+            ],
+            yakshagana: [
+                { id: 1, title: 'Hejje (Footwork Basics)', duration: '12 min', desc: 'Percussive stamp patterns with bent stance.' },
+                { id: 2, title: 'Padya & Vaachika', duration: '15 min', desc: 'Combining dialogue delivery with movement.' },
+                { id: 3, title: 'Ranga Sthala Entry', duration: '18 min', desc: 'Dramatic stage entrance with curtain work.' },
+                { id: 4, title: 'Combat Choreography', duration: '22 min', desc: 'Stylized battle sequences between characters.' },
+            ],
+            bihu: [
+                { id: 1, title: 'Jeng Bihu (Hand Sway)', duration: '8 min', desc: 'Basic Bihu hand and hip sway.' },
+                { id: 2, title: 'Bagurumba Steps', duration: '12 min', desc: 'Butterfly-inspired movement patterns.' },
+                { id: 3, title: 'Pepa & Dhol Sync', duration: '14 min', desc: 'Dancing to traditional Assamese instruments.' },
+                { id: 4, title: 'Group Formation Dance', duration: '18 min', desc: 'Circle and line formations for Bohag Bihu.' },
+            ],
+            ghoomar: [
+                { id: 1, title: 'Ghoomna (Spin Basics)', duration: '8 min', desc: 'Graceful spinning with flowing skirt.' },
+                { id: 2, title: 'Haath Phervi (Arms)', duration: '12 min', desc: 'Circular arm patterns during rotation.' },
+                { id: 3, title: 'Panihari Steps', duration: '15 min', desc: 'Movements inspired by water-carrying grace.' },
+                { id: 4, title: 'Festival Choreography', duration: '18 min', desc: 'Complete Ghoomar for Gangaur celebrations.' },
+            ],
+            theyyam: [
+                { id: 1, title: 'Thottam (Invocation)', duration: '10 min', desc: 'Ritual chanting with preparatory body movements.' },
+                { id: 2, title: 'Vellattam (Preliminary)', duration: '15 min', desc: 'Preliminary dance without full costume.' },
+                { id: 3, title: 'Theyyattam (Main Dance)', duration: '22 min', desc: 'Full ritual dance with divine embodiment.' },
+                { id: 4, title: 'Fire Walk Sequence', duration: '18 min', desc: 'Vigorous steps mimicking the sacred fire ritual.' },
+            ],
+        };
 
         const state = {
             view: 'landing',
@@ -674,11 +797,10 @@
                 tracking: [],
                 postureDetails: []
             },
-
-            // 👇 ADD THESE (NEW)
             poseHoldStart: null,
             poseConfirmed: false,
-            autoAdvanced: false
+            autoAdvanced: false,
+            activeFilter: 'all'
         };
 
 
@@ -696,7 +818,6 @@
                 state.view = viewId;
                 if (viewId !== 'lecture') app.stopCamera();
                 if (viewId === 'dashboard') {
-                    // Reset tab when entering new dashboard
                     app.switchTab('tutorial');
                 }
                 window.scrollTo(0, 0);
@@ -717,14 +838,18 @@
                 }, 3000);
             },
 
-            renderDances: () => {
+            renderDances: (filter = 'all') => {
+                state.activeFilter = filter;
                 const grid = document.getElementById('dance-grid');
-                grid.innerHTML = DANCES.map(d => `
+                const filtered = filter === 'all' ? DANCES : DANCES.filter(d => d.tag.toLowerCase().includes(filter.toLowerCase()));
+
+                grid.innerHTML = filtered.map(d => `
                     <div onclick="app.selectDance('${d.id}')" class="group relative h-52 rounded-sm overflow-hidden cursor-pointer shadow-2xl border border-white/5 hover:border-[var(--color-primary)] transition-all">
                         <img src="${d.img}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" alt="${d.name}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518131393663-39c2f6d62325?q=80&w=600'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90"></div>
                         <div class="absolute bottom-0 left-0 p-6">
-                            <p class="text-[var(--color-primary)] text-xs font-bold uppercase tracking-widest mb-1">${d.origin}</p>
+                            <span class="inline-block px-2 py-0.5 text-[9px] uppercase tracking-widest font-bold rounded-sm mb-2 ${d.tag === 'Classical' ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : d.tag === 'Folk' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-purple-500/20 text-purple-400'}">${d.tag}</span>
+                            <p class="text-[var(--color-text-muted)] text-xs font-bold uppercase tracking-widest mb-1">${d.origin}</p>
                             <h3 class="text-2xl font-display text-white mb-2 group-hover:translate-x-2 transition-transform">${d.name}</h3>
                         </div>
                     </div>
@@ -733,11 +858,13 @@
 
             selectDance: (id) => {
                 state.dance = DANCES.find(d => d.id === id);
+                const lectures = CURRICULA[id] || CURRICULA.bharatanatyam;
                 document.getElementById('dashboard-title').innerText = state.dance.name;
+                document.getElementById('dashboard-meta').innerHTML = `<span class="text-sm text-white/60">${state.dance.origin}</span><span class="text-white/30">•</span><span class="text-sm text-[var(--color-primary)]">${state.dance.tag}</span>`;
                 document.getElementById('dashboard-hero-img').src = state.dance.img;
-                document.getElementById('lecture-list').innerHTML = LECTURES.map((l, i) => `
+                document.getElementById('lecture-list').innerHTML = lectures.map((l, i) => `
                     <div onclick="app.selectLecture(${l.id})" class="glass-card p-6 rounded-sm flex items-center gap-6 cursor-pointer hover:bg-white/5 transition group border-l-4 border-transparent hover:border-l-[var(--color-primary)]">
-                        <div class="text-4xl font-display text-gray-600 group-hover:text-[var(--color-primary)] transition">0${i + 1}</div>
+                        <div class="text-4xl font-display text-gray-600 group-hover:text-[var(--color-primary)] transition">${String(i + 1).padStart(2, '0')}</div>
                         <div class="flex-grow">
                             <h4 class="text-lg font-bold text-white group-hover:text-[var(--color-primary)] transition">${l.title}</h4>
                             <p class="text-sm text-gray-400">${l.desc}</p>
@@ -749,7 +876,8 @@
             },
 
             selectLecture: (id) => {
-                state.lecture = LECTURES.find(l => l.id === id);
+                const lectures = CURRICULA[state.dance?.id] || CURRICULA.bharatanatyam;
+                state.lecture = lectures.find(l => l.id === id);
                 document.getElementById('lecture-nav-title').innerText = state.lecture.title;
                 app.switchTab('tutorial');
                 router.navigate('lecture');
