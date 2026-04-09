@@ -843,6 +843,20 @@
                 const grid = document.getElementById('dance-grid');
                 const filtered = filter === 'all' ? DANCES : DANCES.filter(d => d.tag.toLowerCase().includes(filter.toLowerCase()));
 
+                // Update filter tab styling
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    const isActive = btn.dataset.filter === filter;
+                    btn.className = `filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border ${
+                        isActive
+                            ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-black'
+                            : 'border-white/15 text-gray-400 hover:text-white hover:border-white/30'
+                    }`;
+                });
+
+                // Update count
+                const countEl = document.getElementById('dance-count');
+                if (countEl) countEl.textContent = filtered.length;
+
                 grid.innerHTML = filtered.map(d => `
                     <div onclick="app.selectDance('${d.id}')" class="group relative h-52 rounded-sm overflow-hidden cursor-pointer shadow-2xl border border-white/5 hover:border-[var(--color-primary)] transition-all">
                         <img src="${d.img}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" alt="${d.name}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518131393663-39c2f6d62325?q=80&w=600'">
