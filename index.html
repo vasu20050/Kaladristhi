@@ -1219,8 +1219,13 @@
                         drawLandmarks(ctx, results.rightHandLandmarks, {color: '#ffffff', fillColor: feedbackColor, radius: 2});
                     }
 
-                    // Face Mesh Drawing — lightweight (contour + key features only, no tesselation)
+                    // Face Mesh Drawing — Full Face Net and key features
                     if (results.faceLandmarks) {
+                        // The full Face Net (Tesselation)
+                        drawConnectors(ctx, results.faceLandmarks, FACEMESH_TESSELATION, {
+                            color: 'rgba(238, 188, 81, 0.15)', lineWidth: 0.5
+                        });
+                        
                         drawConnectors(ctx, results.faceLandmarks, FACEMESH_FACE_OVAL, {
                             color: 'rgba(238, 188, 81, 0.45)', lineWidth: 1.5
                         });
