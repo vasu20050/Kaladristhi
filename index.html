@@ -925,12 +925,25 @@
                         el.classList.add('animate-fade-up');
                     }
                 });
-                document.getElementById(`view-${viewId}`).classList.add('active');
+                const activeView = document.getElementById(`view-${viewId}`);
+                activeView.classList.add('active');
                 state.view = viewId;
                 if (viewId !== 'lecture') app.stopCamera();
                 if (viewId === 'dashboard') {
                     app.switchTab('tutorial');
                 }
+                
+                // Optimize video playback: pause inactive, play active
+                document.querySelectorAll('video').forEach(vid => {
+                    if (vid.id !== 'webcam' && vid.hasAttribute('autoplay')) {
+                        if (activeView.contains(vid)) {
+                            vid.play().catch(() => {});
+                        } else {
+                            vid.pause();
+                        }
+                    }
+                });
+
                 window.scrollTo(0, 0);
             }
         };
@@ -942,7 +955,7 @@
                 state.history = await practiceSessionsDB.find();
                 setTimeout(() => {
                     app.warmupHolistic();
-                }, 300);
+                }, 4000); // Delayed to allow smooth entry animations
                 setTimeout(() => {
                     document.getElementById('view-landing').style.display = 'none';
                     router.navigate('entry');
@@ -1018,8 +1031,20 @@
             },
 
             switchTab: (tab) => {
-                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                document.getElementById(`content-${tab}`).classList.remove('hidden');
+                document.querySelectorAll('.tab-content').forEach(el => {
+                    el.classList.add('hidden');
+                    el.querySelectorAll('video').forEach(vid => {
+                        if (vid.id !== 'webcam') vid.pause();
+                    });
+                });
+                const activeTab = document.getElementById(`content-${tab}`);
+                activeTab.classList.remove('hidden');
+                
+                activeTab.querySelectorAll('video').forEach(vid => {
+                    if (vid.id !== 'webcam' && vid.hasAttribute('autoplay')) {
+                        vid.play().catch(() => {});
+                    }
+                });
 
                 ['tutorial', 'practice', 'results'].forEach(t => {
                     const btn = document.getElementById(`tab-${t}`);
