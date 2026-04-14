@@ -265,7 +265,7 @@
                     <h2 class="text-2xl md:text-4xl font-display text-white leading-tight mb-2">
                         Where <span class="italic text-[var(--color-primary)]">Tradition</span> meets Movement
                     </h2>
-                    <p class="text-sm text-white/50 hidden md:block">Explore 33 dance traditions spanning every corner of India — from temple sanctums to tribal heartlands.</p>
+                    <p class="text-sm text-white/50 hidden md:block">Explore 37 dance traditions spanning every corner of India — from temple sanctums to tribal heartlands.</p>
                 </div>
             </div>
 
@@ -273,7 +273,7 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
                 <div>
                     <h2 class="text-3xl md:text-4xl font-display text-white mb-1">Choose Your Form</h2>
-                    <p class="text-sm text-gray-400"><span id="dance-count">33</span> dance traditions across India</p>
+                    <p class="text-sm text-gray-400"><span id="dance-count">37</span> dance traditions across India</p>
                 </div>
                 <div class="flex gap-2 flex-wrap" id="filter-tabs">
                     <button onclick="app.renderDances('all')" class="filter-btn px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition border border-[var(--color-primary)] bg-[var(--color-primary)] text-black" data-filter="all">All</button>
@@ -695,6 +695,8 @@
             { id: 'kummi', name: 'Kummi', img: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=800&auto=format&fit=crop', origin: 'Tamil Nadu', tag: 'Folk' },
             { id: 'karakattam', name: 'Karakattam', img: 'media/img/KARAKATTAM.jpg', origin: 'Tamil Nadu', tag: 'Folk' },
             { id: 'giddha', name: 'Giddha', img: 'media/img/giddha.jpg', origin: 'Punjab', tag: 'Folk' },
+            { id: 'bhavai', name: 'Bhavai', img: 'media/img/bhavai.jpg', origin: 'Rajasthan', tag: 'Folk' },
+            { id: 'koli', name: 'Koli', img: 'media/img/koli.jpg', origin: 'Maharashtra', tag: 'Folk' },
 
             // ── Tribal ──
             // ── Tribal ──
@@ -702,12 +704,14 @@
             { id: 'cheraw', name: 'Cheraw (Bamboo)', img: 'https://upload.wikimedia.org/wikipedia/commons/3/3b/Cheraw_Dance.jpg', origin: 'Mizoram', tag: 'Tribal' },
             { id: 'dumhal', name: 'Dumhal', img: 'media/img/dancer.png', origin: 'Jammu & Kashmir', tag: 'Tribal' },
             { id: 'hojagiri', name: 'Hojagiri', img: 'media/img/hojagiri.jpg', origin: 'Tripura', tag: 'Tribal' },
+            { id: 'siddi_dhamal', name: 'Siddi Dhamal', img: 'media/img/siddi_dhamal.jpg', origin: 'Gujarat', tag: 'Tribal' },
 
             // ── Martial / Semi-Classical ──
             { id: 'chhau', name: 'Chhau', img: 'media/img/dancer1.png', origin: 'Jharkhand / W. Bengal', tag: 'Martial' },
             { id: 'yakshagana', name: 'Yakshagana', img: 'https://upload.wikimedia.org/wikipedia/commons/e/e9/Yakshaganads.jpg', origin: 'Karnataka', tag: 'Martial' },
             { id: 'gotipua', name: 'Gotipua', img: 'https://upload.wikimedia.org/wikipedia/commons/b/b5/Gotipua_dance_in_Raghurajpur_ei2-39.jpg', origin: 'Odisha', tag: 'Martial' },
             { id: 'thang_ta', name: 'Thang-Ta', img: 'media/img/thang_ta.jpg', origin: 'Manipur', tag: 'Martial' },
+            { id: 'kalaripayattu', name: 'Kalaripayattu', img: 'media/img/kalaripayattu.jpg', origin: 'Kerala', tag: 'Martial' },
 
             // ── Ritual ──
             { id: 'theyyam', name: 'Theyyam', img: 'https://upload.wikimedia.org/wikipedia/commons/3/38/Kathivanoor_Veeran_Chemmarathi_Thara-Eripuram.jpg', origin: 'Kerala', tag: 'Ritual' },
@@ -916,6 +920,30 @@
                 { id: 2, title: 'Belly Shaking', duration: '15 min', desc: 'Rhythmic undulation of the painted belly.' },
                 { id: 3, title: 'Prowling Steps', duration: '18 min', desc: 'Low, grounded movements mimicking a tiger on the hunt.' },
                 { id: 4, title: 'Hunter and Tiger', duration: '22 min', desc: 'Full sequence including interactions with the hunter character.' },
+            ],
+            bhavai: [
+                { id: 1, title: 'Brass Pot Balancing', duration: '15 min', desc: 'Core neck strength and spine alignment for balancing multiple pots.' },
+                { id: 2, title: 'Edge Balancing', duration: '20 min', desc: 'Techniques for stepping and balancing on the rim of a brass plate.' },
+                { id: 3, title: 'Glass Balance', duration: '18 min', desc: 'Precise footwork while standing on the edges of glass bottles.' },
+                { id: 4, title: 'Sword Balance', duration: '22 min', desc: 'Acrobatic movements while moving over the edge of a naked sword.' },
+            ],
+            koli: [
+                { id: 1, title: 'Rowing Movements', duration: '10 min', desc: 'Arm and torso movements mimicking rowing a boat at sea.' },
+                { id: 2, title: 'Wave Stances', duration: '14 min', desc: 'Fluid, synchronized swaying to represent ocean waves.' },
+                { id: 3, title: 'Net Casting (Male)', duration: '16 min', desc: 'Dynamic movements simulating the casting of fishing nets.' },
+                { id: 4, title: 'Fish Catching (Female)', duration: '18 min', desc: 'Lively steps portraying the sorting and catching of the fish.' },
+            ],
+            siddi_dhamal: [
+                { id: 1, title: 'Dhamal Rhythm Sync', duration: '12 min', desc: 'Matching energetic stepping patterns with the large Dhamal drum.' },
+                { id: 2, title: 'Coconut Tossing', duration: '15 min', desc: 'Acrobatic tossing and catching of coconuts in mid-air.' },
+                { id: 3, title: 'Fire Breathing Stances', duration: '18 min', desc: 'Fierce, grounded postures utilized during fire stunts.' },
+                { id: 4, title: 'Group Ecstasy (Mast)', duration: '20 min', desc: 'High-energy, fast-paced free-flowing celebratory movements.' },
+            ],
+            kalaripayattu: [
+                { id: 1, title: 'Chuvadu (Basic Stances)', duration: '15 min', desc: 'Foundation stances inspired by elephant, horse, and lion.' },
+                { id: 2, title: 'Meypayattu (Flexibility)', duration: '20 min', desc: 'Dynamic full-body stretching and flowing transition exercises.' },
+                { id: 3, title: 'High Kicks and Leaps', duration: '18 min', desc: 'Explosive vertical jumps and aerial kicks.' },
+                { id: 4, title: 'Urumi (Whip Sword) Forms', duration: '25 min', desc: 'Fluid, continuous rotational movements for flexible weapons.' },
             ],
         };
 
