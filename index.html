@@ -263,7 +263,7 @@
                 <div class="absolute bottom-0 left-0 p-6 md:p-10 max-w-lg">
                     <p class="text-[var(--color-primary)] text-xs font-bold uppercase tracking-[0.3em] mb-2">Heritage Catalogue</p>
                     <h2 class="text-2xl md:text-4xl font-display text-white leading-tight mb-2">
-                        Where <span class="italic text-[var(--color-primary)]">Tradition</span> meets Movement
+                        Discover <span id="dance-count" class="text-[var(--color-primary)]">60+</span> Distinct Forms
                     </h2>
                     <p class="text-sm text-white/50 hidden md:block">Explore 47 dance traditions spanning every corner of India — from temple sanctums to tribal heartlands.</p>
                 </div>
@@ -700,6 +700,12 @@
             { id: 'kolattam', name: 'Kolattam', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Kolattam_dance.jpg/800px-Kolattam_dance.jpg', origin: 'Andhra Pradesh', tag: 'Folk' },
             { id: 'karma', name: 'Karma', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Karma_dance_Jharkhand.jpg/800px-Karma_dance_Jharkhand.jpg', origin: 'Jharkhand / C. India', tag: 'Folk' },
             { id: 'charkula', name: 'Charkula', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Charkula_Dance.jpg/800px-Charkula_Dance.jpg', origin: 'Uttar Pradesh', tag: 'Folk' },
+            { id: 'dhangari_gaja', name: 'Dhangari Gaja', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Dhangari_Gaja_Dance.jpg/800px-Dhangari_Gaja_Dance.jpg', origin: 'Maharashtra', tag: 'Folk' },
+            { id: 'hikat', name: 'Hikat', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Cultural_program_at_Shilpgram_Udaipur_07.jpg/800px-Cultural_program_at_Shilpgram_Udaipur_07.jpg', origin: 'Jammu & Kashmir', tag: 'Folk' },
+            { id: 'jawara', name: 'Jawara', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Jawara_dance_mp.jpg/800px-Jawara_dance_mp.jpg', origin: 'Madhya Pradesh', tag: 'Folk' },
+            { id: 'matki', name: 'Matki', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Matki_dance_mp.jpg/800px-Matki_dance_mp.jpg', origin: 'Madhya Pradesh', tag: 'Folk' },
+            { id: 'bagurumba', name: 'Bagurumba', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Bodo_dance_Bagurumba.jpg/800px-Bodo_dance_Bagurumba.jpg', origin: 'Assam', tag: 'Folk' },
+            { id: 'kolkali', name: 'Kolkali', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Kolkali_Kerala.jpg/800px-Kolkali_Kerala.jpg', origin: 'Kerala', tag: 'Folk' },
 
             // ── Tribal ──
             { id: 'kalbelia', name: 'Kalbelia', img: 'media/img/KALBELIA.png', origin: 'Rajasthan', tag: 'Tribal' },
@@ -710,6 +716,8 @@
             { id: 'santhali', name: 'Santhali', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Santali_dance.jpg/800px-Santali_dance.jpg', origin: 'Jharkhand / W. Bengal', tag: 'Tribal' },
             { id: 'wangala', name: 'Wangala', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Wangala_dance.jpg/800px-Wangala_dance.jpg', origin: 'Meghalaya', tag: 'Tribal' },
             { id: 'laho', name: 'Laho', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Meghalaya_cultural_dance.jpg/800px-Meghalaya_cultural_dance.jpg', origin: 'Meghalaya', tag: 'Tribal' },
+            { id: 'singhi_chham', name: 'Singhi Chham', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Singhi_Chham_Snow_Lion_Dance.jpg/800px-Singhi_Chham_Snow_Lion_Dance.jpg', origin: 'Sikkim', tag: 'Tribal' },
+            { id: 'gaur_maria', name: 'Gaur Maria', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Bison_Horn_Maria_Dance.jpg/800px-Bison_Horn_Maria_Dance.jpg', origin: 'Chhattisgarh', tag: 'Tribal' },
 
             // ── Martial / Semi-Classical ──
             { id: 'chhau', name: 'Chhau', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Chhau_dance_west_bengal.jpg/800px-Chhau_dance_west_bengal.jpg', origin: 'Jharkhand / W. Bengal', tag: 'Martial' },
@@ -719,11 +727,17 @@
             { id: 'kalaripayattu', name: 'Kalaripayattu', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Kalaripayattu.jpg/800px-Kalaripayattu.jpg', origin: 'Kerala', tag: 'Martial' },
             { id: 'perini', name: 'Perini Sivatandavam', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Perini_Sivatandavam.jpg/800px-Perini_Sivatandavam.jpg', origin: 'Telangana', tag: 'Martial' },
             { id: 'paika', name: 'Paika', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Paika_Akhada.jpg/800px-Paika_Akhada.jpg', origin: 'Odisha', tag: 'Martial' },
+            { id: 'dhol_cholom', name: 'Dhol Cholom', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Drum_dance_of_manipur.jpg/800px-Drum_dance_of_manipur.jpg', origin: 'Manipur', tag: 'Martial' },
+            { id: 'pung_cholom', name: 'Pung Cholom', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Pung_Cholom_manipur.jpg/800px-Pung_Cholom_manipur.jpg', origin: 'Manipur', tag: 'Martial' },
+            { id: 'vilasini_natyam', name: 'Vilasini Natyam', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Vilasini_Natyam.jpg/800px-Vilasini_Natyam.jpg', origin: 'Andhra Pradesh', tag: 'Classical' },
+            { id: 'gaudiya_nritya', name: 'Gaudiya Nritya', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gaudiya_Nritya_performer.jpg/800px-Gaudiya_Nritya_performer.jpg', origin: 'West Bengal', tag: 'Classical' },
 
             // ── Ritual ──
             { id: 'theyyam', name: 'Theyyam', img: 'https://upload.wikimedia.org/wikipedia/commons/3/38/Kathivanoor_Veeran_Chemmarathi_Thara-Eripuram.jpg', origin: 'Kerala', tag: 'Ritual' },
             { id: 'padayani', name: 'Padayani', img: 'https://upload.wikimedia.org/wikipedia/commons/6/62/Kottayam_manimala_alapra_tacharikkal_padayani.png', origin: 'Kerala', tag: 'Ritual' },
             { id: 'puli_kali', name: 'Puli Kali', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Puli_Kali_Photos_Thrissur_Pooram.jpg/800px-Puli_Kali_Photos_Thrissur_Pooram.jpg', origin: 'Kerala', tag: 'Ritual' },
+            { id: 'kavadi_attam', name: 'Kavadi Attam', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Kavadi_Dance.jpg/800px-Kavadi_Dance.jpg', origin: 'Tamil Nadu', tag: 'Ritual' },
+            { id: 'parai_attam', name: 'Parai Attam', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Parai_dance_Tamil_Nadu.jpg/800px-Parai_dance_Tamil_Nadu.jpg', origin: 'Tamil Nadu', tag: 'Ritual' },
         ];
 
 
