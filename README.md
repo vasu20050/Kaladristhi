@@ -5,7 +5,6 @@
 [![JavaScript](https://img.shields.io/badge/Language-Vanilla%20JS-F7DF1E.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
 **Kaladrishti** is a premium, AI-powered educational platform dedicated to the preservation and teaching of Indian classical and folk dance traditions. By leveraging cutting-edge computer vision through Google's **MediaPipe Holistic**, the application provides real-time feedback on posture, gestures (mudras), and expressions (abhinaya).
-
 ---
 
 ## ✨ Key Features
